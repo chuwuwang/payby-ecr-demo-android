@@ -1,2 +1,2 @@
-# payby-pos-ecr
-PayBy POS ECR SDK for Android
+# PayBy POS ECR
+PayBy POS ECR demo for Android.
