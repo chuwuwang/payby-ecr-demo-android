@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+message ResourceUri {
+  optional string url = 1;
+  optional string urn = 2;
+}
+
+message Image {
+  enum ImageType {
+    PNG = 0;
+    JPEG = 1;
+    GIF = 2;
+  }
+
+  ImageType type = 1;
+  bytes data = 2;
+}

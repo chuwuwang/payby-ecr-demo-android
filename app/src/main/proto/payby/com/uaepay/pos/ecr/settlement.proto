@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package com.uaepay.pos.ecr.acquire;
+
+import "payby/com/uaepay/pos/ecr/common.proto";
+import "google/protobuf/timestamp.proto";
+
+message CloseBatchRequest {
+  string operatorId = 1;
+}
+
+message TransactionReport {
+  common.TimeScope timeScope = 1;
+  int32 totalCount = 2;
+  common.Money totalAmount = 3;
+  repeated OrderSummary orderSummaries = 4;
+}
+
+message OrderSummary {
+  string code = 1;
+  int32 count = 2;
+  common.Money summation = 3;
+  repeated ReportItem reportItems = 4;
+}
+
+message ReportItem {
+  google.protobuf.Timestamp eventTime = 1;
+  common.Money amount = 2;
+  string orderNo = 3;
+  optional string reserved = 4;
+}
+

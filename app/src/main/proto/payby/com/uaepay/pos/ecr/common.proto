@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package com.uaepay.pos.ecr.common;
+import "google/protobuf/timestamp.proto";
+
+message Money {
+  string currencyCode = 1;
+  string amount = 2;
+}
+
+message TimeScope {
+  optional google.protobuf.Timestamp from = 1;
+  optional google.protobuf.Timestamp to = 2;
+}
+
+message PageParam {
+  int32 number = 1;
+  int32 size = 2;
+}
+
+message PaginationParam{
+  int32 totalElements = 1;
+  int32 totalPages = 2 ;
+  PageParam pageParam = 3;
+}
+

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package com.uaepay.pos.ecr.acquire;
+
+import "payby/com/uaepay/pos/ecr/common.proto";
+import "payby/com/uaepay/pos/ecr/acquire.proto";
+
+message RefundRequest {
+  common.Money refundAmount = 1;
+  string acquireOrderNo = 2;
+  repeated Receipt printReceipts = 3;
+}
+
+message RefundOrder {
+  string refundOrderNo = 1;
+  string acquireOrderNo = 2;
+  common.Money refundAmount = 3;
+  string status = 4;
+}
+

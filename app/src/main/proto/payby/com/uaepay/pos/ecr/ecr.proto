@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package com.uaepay.pos.ecr;
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
+message EcrEnvelope {
+  uint32 version = 1;
+  oneof content{
+    Ping ping = 2;
+    Pong pong = 3;
+    Request request = 4;
+    Response response = 5;
+    Event event = 6;
+  }
+}
+
+message Ping{
+  int32 messageId = 1;
+  optional google.protobuf.Timestamp timestamp = 2;
+}
+
+message Pong{
+  int32 messageId = 1;
+  optional google.protobuf.Timestamp timestamp = 2;
+}
+
+message Request{
+  int32 messageId = 1;
+  optional google.protobuf.Timestamp timestamp = 2;
+  string serviceName = 3;
+  optional google.protobuf.Any body = 4;
+}
+message Response{
+  int32 messageId = 1;
+  optional google.protobuf.Timestamp timestamp = 2;
+  string serviceName = 3;
+  string responseCode = 4;
+  optional string subResponseCode = 5;
+  optional string errorMessage = 6;
+  optional google.protobuf.Any body = 7;
+}
+
+message Event{
+  optional google.protobuf.Timestamp timestamp = 1;
+  string serviceName = 2;
+  optional google.protobuf.Any body = 3;
+}
+
+message Echo{
+  string content = 1;
+}
+
+

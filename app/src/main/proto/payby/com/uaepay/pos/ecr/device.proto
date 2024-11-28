@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package com.uaepay.pos.ecr.acquire;
+
+message DeviceInfo {
+  string deviceId = 1;
+  Store store = 2;
+  Merchant merchant = 3;
+}
+
+message Store{
+  optional string name = 1;
+  optional string location = 2;
+}
+
+message Merchant{
+  string mid = 1;
+  optional string name = 2;
+  optional string mcc = 3;
+  optional string logoImageUrl = 4; //可以直接下载或者使用/multiMedia/getImage获得图片
+  optional string printLogoImageUrl = 5; //可以直接下载或者使用/multiMedia/getImage获得图片
+}

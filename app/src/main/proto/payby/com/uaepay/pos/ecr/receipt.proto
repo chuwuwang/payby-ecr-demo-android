@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package com.uaepay.pos.ecr.acquire;
+
+import "payby/com/uaepay/pos/ecr/common.proto";
+import "payby/com/uaepay/pos/ecr/acquire.proto";
+
+message AcquireReceipt {
+  common.Money amount = 1;
+  optional string subject = 2;
+  optional string paymentMethod = 3;
+  optional string reserved = 4;
+}
+
+message ReceiptsRequest {
+  string orderNo = 1;
+  repeated Receipt receipts = 2;
+}
+
+message ReceiptRequest {
+  string orderNo = 1;
+  Receipt receipt = 2;
+}
+

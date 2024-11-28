@@ -1,0 +1,83 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.payby.pos.common'
+    compileSdk build_versions.compile_sdk
+    defaultConfig {
+        minSdk build_versions.min_sdk
+        versionCode 3
+        versionName "1.1.3"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        uat {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+    sourceSets {
+        main { jniLibs.srcDirs = ['libs'] }
+    }
+    kotlinOptions {
+        jvmTarget = build_versions.jvm_target
+    }
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility build_versions.java_version
+        targetCompatibility build_versions.java_version
+    }
+}
+
+dependencies {
+    api fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    api "androidx.core:core-ktx:1.12.0"
+    api "androidx.appcompat:appcompat:1.6.1"
+    api "androidx.fragment:fragment-ktx:1.6.2"
+    api "androidx.activity:activity-ktx:1.8.2"
+    api "com.google.android.material:material:1.11.0"
+    // lifecycle
+    def lifecycle_version = "2.6.2"
+    api "androidx.lifecycle:lifecycle-common:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-process:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    // live data
+    api "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-livedata-core-ktx:$lifecycle_version"
+    // kotlin coroutines
+    api "org.jetbrains.kotlin:kotlin-stdlib:1.9.10"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.4"
+    // google ui
+    api "com.google.android.flexbox:flexbox:3.0.0"
+    // compose
+    api "androidx.activity:activity-compose:1.8.2"
+    api "androidx.compose.ui:ui"
+    api "androidx.compose.ui:ui-graphics"
+    api "androidx.compose.material3:material3"
+    api "androidx.compose.ui:ui-tooling-preview"
+    api platform("androidx.compose:compose-bom:2023.03.00")
+    // gson
+    api "com.google.code.gson:gson:2.10.1"
+    // glide
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    implementation "jp.wasabeef:glide-transformations:4.3.0"
+    // scanner
+    implementation "com.google.zxing:core:3.3.3"
+    implementation "com.huawei.hms:scanplus:2.1.0.300"
+}

@@ -1,0 +1,163 @@
+syntax = "proto3";
+
+package com.uaepay.pos.ecr.acquire;
+
+import "payby/com/uaepay/pos/ecr/common.proto";
+import "payby/com/uaepay/pos/ecr/device.proto";
+import "google/protobuf/timestamp.proto";
+
+message PlaceOrderRequest {
+  common.Money amount = 1;
+  optional string subject = 2;
+  optional string reserved = 3;
+  InvokeParams invokeParams = 4;
+  optional CashierParams cashierParams = 5;
+}
+
+message InvokeParams{
+  InvokeType invokeType = 1;
+
+  // do not send notification by default
+  optional AcquiredResultNotification notification = 2;
+}
+enum InvokeType {
+  SYNCHRONIZATION = 0;
+  ASYNCHRONIZATION = 1;
+}
+
+enum AcquiredResultNotification {
+  REQUEST = 0;
+  EVENT = 1;
+}
+
+message CashierParams {
+  // display all methods by default
+  repeated PaymentMethod paymentMethods = 1;
+
+  // do not display result page by default
+  optional bool displayResultPage = 2;
+
+  // print nothing by default
+  repeated Receipt printReceipts = 3;
+}
+
+enum Receipt {
+  MERCHANT_RECEIPT = 0;
+  CUSTOMER_RECEIPT = 1;
+}
+
+enum PaymentMethod{
+  BANKCARD = 0;
+  CUSTOMER_PRESENT_CODE = 1;
+  POS_PRESENT_CODE = 2;
+}
+
+message OrderNoWrapper {
+  string orderNo = 1;
+}
+
+message AcquireOrder {
+  string orderNo = 1;
+  common.Money amount = 2;
+  AcquireOrderStatus status = 3;
+  optional string reserved = 4;
+  google.protobuf.Timestamp createdTime = 5;
+  optional string failCode = 6;
+  optional string failMessage = 7;
+  optional string receiptNo = 8;
+  optional PaymentOrder paymentOrder = 9;
+}
+
+enum AcquireOrderStatus {
+  SUCCESSFUL = 0;
+  PROCESSING = 1;
+  FAILED = 2;
+}
+
+
+message PaymentOrder {
+
+  optional PayMethod payMethod = 1;
+  optional google.protobuf.Timestamp paidTime = 2;
+  oneof content {
+    BankcardPaymentInfo bankcardPaymentInfo = 3;
+    AppPaymentInfo appPaymentInfo = 4;
+  }
+}
+
+enum PayMethod {
+  PHYSICAL_CARD_PAY = 0;
+  APP = 1;
+}
+
+message BankcardPaymentInfo {
+  optional string cardBrand = 1;
+  optional string authCode = 2;
+  optional string tid = 3;
+  optional string rrn = 4;
+  optional string amexMID = 5;
+  optional string cardNoMask = 6;
+  optional ReadType readType = 7;
+  optional PasswordMode passwordMode = 8;
+  optional string responseCode = 9;
+  optional string responseDescription = 10;
+  optional bool isSignature = 11;
+  optional EmvData emvData = 12;
+}
+
+enum ReadType {
+  MANUAL = 0;
+  MAGNETIC = 1;
+  CONTACTLESS = 2;
+  CONTACT = 3;
+}
+
+enum PasswordMode {
+  ONLINE_PASSWORD = 0;
+  OFFLINE_PASSWORD = 1;
+  NO_PASSWORD = 2;
+}
+message EmvData {
+  optional string tc = 1;
+  optional string aid = 2;
+  optional string tvr = 3;
+  optional string atc = 4;
+  optional string tsi = 5;
+  optional string cid = 6;
+  optional string arqc = 7;
+  optional string appName = 8;
+  optional string appLabel = 9;
+}
+
+message AppPaymentInfo {
+  optional string appCode = 1;
+}
+
+message QueryAcquireOrderPageRequest {
+  common.PageParam pageParam = 1;
+  common.TimeScope timeScope = 2;
+  optional string orderNo = 3;
+  optional string reserved = 4;
+  repeated string status = 5;
+  OrderScope orderScope = 6;
+}
+
+enum OrderScope {
+  DEVICE_SCOPE = 0;
+  STORE_SCOPE = 1;
+  MERCHANT_SCOPE = 2;
+}
+
+message AcquireOrderPage {
+  common.PaginationParam paginationParam = 1;
+  repeated AcquireOrderListView items = 2;
+}
+
+message AcquireOrderListView {
+  string orderNo = 1;
+  common.Money amount = 2;
+  AcquireOrderStatus status = 3;
+  optional string reserved = 4;
+  optional google.protobuf.Timestamp createdTime = 5;
+}
+
