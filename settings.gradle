@@ -10,7 +10,6 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven { url 'https://jitpack.io' }
-        maven { url 'https://nexus.test2pay.com/repository/maven-snapshots' }
         maven { url 'https://developer.huawei.com/repo/' }
     }
 }
@@ -20,7 +19,6 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-        maven { url 'https://nexus.test2pay.com/repository/maven-snapshots' }
         maven { url 'https://developer.huawei.com/repo/' }
     }
 }
@@ -28,4 +26,3 @@ dependencyResolutionManagement {
 include ':app'
 include ':library'
 include ':infrastructure:common'
-//include ':infrastructure:widget'

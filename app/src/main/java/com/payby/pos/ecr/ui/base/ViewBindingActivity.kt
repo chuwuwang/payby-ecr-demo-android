@@ -30,5 +30,4 @@ abstract class ViewBindingActivity<T : ViewBinding> : BaseActivity() {
         binding.apply { init() }
     }
 
-
 }
