@@ -3,6 +3,8 @@ package com.payby.pos.ecr.bluetooth;
 import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 
+import com.payby.pos.ecr.connect.ConnectionListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

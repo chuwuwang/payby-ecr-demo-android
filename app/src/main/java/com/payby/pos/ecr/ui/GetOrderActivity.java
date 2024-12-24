@@ -16,8 +16,6 @@ import com.huawei.hms.ml.scan.HmsScan;
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
 import com.kongzue.dialogx.dialogs.WaitDialog;
 import com.payby.pos.ecr.R;
-import com.payby.pos.ecr.bluetooth.ClassicBTManager;
-import com.payby.pos.ecr.bluetooth.ConnectionListener;
 import com.payby.pos.ecr.connect.ConnectService;
 import com.payby.pos.ecr.internal.processor.Processor;
 import com.uaepay.pos.ecr.Ecr;

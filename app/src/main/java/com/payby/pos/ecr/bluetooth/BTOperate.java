@@ -9,7 +9,6 @@ import com.kongzue.dialogx.dialogs.BottomMenu;
 import com.kongzue.dialogx.dialogs.WaitDialog;
 import com.kongzue.dialogx.interfaces.OnMenuItemClickListener;
 import com.payby.pos.ecr.App;
-import com.payby.pos.ecr.ui.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +29,6 @@ public class BTOperate {
     public void findPairedBTDevices() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null) {
-
           App.showToast("Bluetooth is not supported on this device");
             return;
         }

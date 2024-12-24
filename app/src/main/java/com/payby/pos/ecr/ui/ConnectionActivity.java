@@ -10,12 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.kongzue.dialogx.dialogs.WaitDialog;
-import com.payby.pos.ecr.App;
 import com.payby.pos.ecr.R;
-import com.payby.pos.ecr.bluetooth.ClassicBTManager;
-import com.payby.pos.ecr.bluetooth.ConnectionListener;
 import com.payby.pos.ecr.connect.ConnectType;
-import com.payby.pos.ecr.inapp.InAppServiceBinder;
 import com.payby.pos.ecr.connect.ConnectService;
 import com.permissionx.guolindev.callback.RequestCallback;
 

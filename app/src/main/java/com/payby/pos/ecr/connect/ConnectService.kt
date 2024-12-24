@@ -8,7 +8,6 @@ import com.payby.pos.ecr.App
 import com.payby.pos.ecr.bluetooth.BTOperate
 import com.payby.pos.ecr.bluetooth.ClassicBTManager
 import com.payby.pos.ecr.bluetooth.ClassicBTService
-import com.payby.pos.ecr.bluetooth.ConnectionListener
 import com.payby.pos.ecr.inapp.InAppServiceBinder
 import com.payby.pos.ecr.internal.InAppCallback
 import com.payby.pos.ecr.utils.ThreadPoolManager
@@ -104,7 +103,8 @@ object ConnectService {
   }
 
 
-  private val connectionListener: ConnectionListener = object : ConnectionListener {
+  private val connectionListener: ConnectionListener = object :
+      ConnectionListener {
     override fun onConnected() {
       Log.e("Demo", "==onConnected==")
       connectCallback?.invoke(true)

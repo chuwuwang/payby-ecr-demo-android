@@ -27,8 +27,8 @@ public class ClassicBTClient implements Runnable {
         this.listener = listener;
     }
 
-    public ClassicBTClient(BluetoothDevice devices) {
-        bluetoothDevice = devices;
+    public ClassicBTClient(BluetoothDevice device) {
+        bluetoothDevice = device;
     }
 
     public void connect() {
@@ -55,7 +55,7 @@ public class ClassicBTClient implements Runnable {
     public void send(byte[] bytes) {
         try {
             if (btSocket != null && btSocket.isConnected() && outputStream != null) {
-                logging(bytes, "<--- client send");
+                logging(bytes, "<--- BTClient send");
                 outputStream.write(bytes);
                 outputStream.flush();
             } else {
@@ -110,7 +110,7 @@ public class ClassicBTClient implements Runnable {
                 while (len != -1) {
                     bytes = new byte[len];
                     System.arraycopy(buffer, 0, bytes, 0, len);
-                    logging(bytes, "---> client received");
+                    logging(bytes, "---> BTClient received");
                     if (listener != null) {
                         listener.onMessage(bytes);
                     }
@@ -143,7 +143,7 @@ public class ClassicBTClient implements Runnable {
     private void logging(byte[] bytes, String message) {
         try {
             String string = new String(bytes);
-            Log.e("ECR", message + ": " + string);
+            Log.e("ClassicBT-Client", message + ": " + string);
         } catch (Exception e) {
             //
         }

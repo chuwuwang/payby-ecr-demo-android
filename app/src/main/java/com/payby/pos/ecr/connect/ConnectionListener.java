@@ -1,4 +1,4 @@
-package com.payby.pos.ecr.bluetooth;
+package com.payby.pos.ecr.connect;
 
 public interface ConnectionListener {
 

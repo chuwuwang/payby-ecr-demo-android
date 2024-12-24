@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-  <queries>
-    <package android:name="com.payby.pos.acquirer" />
-    <package android:name="com.payby.pos.acquirer.uat" />
-  </queries>
+    <queries>
+        <package android:name="com.payby.pos.acquirer" />
+        <package android:name="com.payby.pos.acquirer.uat" />
+    </queries>
 
-  <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
@@ -18,12 +18,15 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission
         android:name="android.permission.INTERNET"
         android:required="false" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -41,14 +44,13 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ECR">
-          <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-          </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity android:name=".ui.MainActivity"
-         >
+        <activity android:name=".ui.MainActivity">
 
         </activity>
         <activity android:name=".ui.SaleActivity" />
@@ -56,10 +58,9 @@
         <activity android:name=".ui.RefundActivity" />
         <activity android:name=".ui.GetOrderActivity" />
         <activity android:name=".ui.ReceiptsActivity" />
-      <activity android:name=".ui.ResultActivity" />
-      <activity android:name=".ui.DeviceActivity" />
-      <activity android:name=".ui.SettlementActivity" />
-
+        <activity android:name=".ui.ResultActivity" />
+        <activity android:name=".ui.DeviceActivity" />
+        <activity android:name=".ui.SettlementActivity" />
 
         <service
             android:name=".bluetooth.ClassicBTService"
