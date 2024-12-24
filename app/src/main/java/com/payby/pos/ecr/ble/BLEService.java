@@ -1,4 +1,4 @@
-package com.payby.pos.ecr.bluetooth;
+package com.payby.pos.ecr.ble;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -14,7 +14,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-public class ClassicBTService extends Service {
+public class BLEService extends Service {
 
     @Nullable
     @Override
@@ -46,9 +46,9 @@ public class ClassicBTService extends Service {
         int action = intent.getIntExtra("extra_action", 0);
         BluetoothDevice bluetoothDevice = intent.getParcelableExtra("extra_bluetoothDevice");
         if (action == ACTION_CONNECT) {
-            ClassicBTManager.getInstance().connect(bluetoothDevice);
+            BLEManager.getInstance().connect(bluetoothDevice);
         } else if (action == ACTION_DISCONNECT) {
-            ClassicBTManager.getInstance().disconnect();
+            BLEManager.getInstance().disconnect();
         }
     }
 
@@ -68,12 +68,12 @@ public class ClassicBTService extends Service {
     private Notification createNotification() {
         String channelId = "ECRDemo Service";
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
-                .setContentText("ClassicBT Service is running")
+                .setContentText("BLE Service is running")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId, channelId, NotificationManager.IMPORTANCE_HIGH);
-            channel.setDescription("The data information exchange for BT");
+            channel.setDescription("The data information exchange for BLE");
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
@@ -84,7 +84,7 @@ public class ClassicBTService extends Service {
     public static final int ACTION_DISCONNECT = 2;
 
     public static void startAction(Context context, int action, BluetoothDevice device) {
-        Intent intent = new Intent(context, ClassicBTService.class);
+        Intent intent = new Intent(context, BLEService.class);
         intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
         intent.putExtra("extra_action", action);
         intent.putExtra("extra_bluetoothDevice", device);

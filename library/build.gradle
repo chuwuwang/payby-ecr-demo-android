@@ -47,5 +47,5 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
 
-    implementation "no.nordicsemi.android:ble:2.9.0"
+    api "no.nordicsemi.android:ble:2.9.0"
 }

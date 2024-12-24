@@ -1,6 +1,7 @@
-package com.payby.pos.ecr.bluetooth;
+package com.payby.pos.ecr.ble;
 
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.util.Log;
 
 import com.payby.pos.ecr.connect.ConnectionListener;
@@ -9,56 +10,56 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ClassicBTManager {
+public class BLEManager {
 
-    private static final String TAG = "ClassicBT-Client";
+    private static final String TAG = "BLE-Client";
 
-    private ClassicBTManager() {
+    private BLEManager() {
     }
 
-    private static ClassicBTManager instance;
+    private static BLEManager instance;
 
-    public static ClassicBTManager getInstance() {
+    public static BLEManager getInstance() {
         if (instance == null) {
-            instance = new ClassicBTManager();
+            instance = new BLEManager();
         }
         return instance;
     }
 
-    private ClassicBTClient classicBTClient;
+    private BLEClient bleClient;
 
     private final List<ConnectionListener> callbacks = new ArrayList<>();
 
-    public void connect(BluetoothDevice device) {
+    public void connect(Context context, BluetoothDevice device) {
         boolean connected = isConnected();
         if (connected) {
-            Log.e(TAG, "The ClassicBT device is already connected");
+            Log.e(TAG, "The BLE device is already connected");
             for (ConnectionListener listener : callbacks) {
                 listener.onConnected();
             }
         } else {
-            classicBTClient = new ClassicBTClient(device);
-            classicBTClient.setListener(listener);
-            classicBTClient.connect();
+            bleClient = new BLEClient(context, device);
+            bleClient.setListener(listener);
+            bleClient.connect();
         }
     }
 
     public void disconnect() {
-        if (classicBTClient != null) {
-            classicBTClient.disconnect();
-            classicBTClient.setListener(null);
+        if (bleClient != null) {
+            bleClient.close();
+            bleClient.setListener(null);
         }
-        classicBTClient = null;
+        bleClient = null;
     }
 
     public void send(byte[] data) {
-        if (classicBTClient != null) {
-            classicBTClient.send(data);
+        if (bleClient != null) {
+            bleClient.send(data);
         }
     }
 
     public boolean isConnected() {
-        return classicBTClient != null && classicBTClient.isConnected();
+        return bleClient != null && bleClient.isDeviceConnected();
     }
 
     public void addListener(ConnectionListener listener) {
@@ -69,11 +70,11 @@ public class ClassicBTManager {
         callbacks.remove(listener);
     }
 
-    private final ClassicBTClientListener listener = new ClassicBTClientListener() {
+    private final BLEClientListener listener = new BLEClientListener() {
 
         @Override
         public void onConnected() {
-            Log.e(TAG, "Connected");
+            Log.e(TAG, "BLE client onConnected");
             List<ConnectionListener> synchronizededList = Collections.synchronizedList(callbacks);
             for (ConnectionListener listener : synchronizededList) {
                 listener.onConnected();
@@ -82,12 +83,12 @@ public class ClassicBTManager {
 
         @Override
         public void onConnecting() {
-            Log.e(TAG, "Connecting");
+            Log.e(TAG, "BLE client onConnecting");
         }
 
         @Override
         public void onDisconnected() {
-            Log.e(TAG, "Disconnected");
+            Log.e(TAG, "BLE client onDisconnected");
             List<ConnectionListener> synchronizededList = Collections.synchronizedList(callbacks);
             for (ConnectionListener listener : synchronizededList) {
                 listener.onDisconnected();

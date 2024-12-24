@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/classic_bluetooth_connect_btn"
+        android:id="@+id/classicBTConnectBtn"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginStart="24dp"
@@ -15,14 +15,24 @@
         android:text="Classic Bluetooth Connect"
         android:textSize="16sp" />
 
-  <Button
-    android:id="@+id/inAppConnectBtn"
-    android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:layout_marginStart="24dp"
-    android:layout_marginTop="24dp"
-    android:layout_marginEnd="24dp"
-    android:text="InApp Connect"
-    android:textSize="16sp" />
+    <Button
+        android:id="@+id/inAppConnectBtn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:text="InApp Connect"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/bleConnectBtn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:text="BLE Connect"
+        android:textSize="16sp" />
 
 </LinearLayout>

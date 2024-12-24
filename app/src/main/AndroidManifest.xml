@@ -50,15 +50,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.MainActivity">
 
-        </activity>
+        <activity android:name=".ui.MainActivity" />
+        <activity android:name=".ui.ResultActivity" />
+
         <activity android:name=".ui.SaleActivity" />
         <activity android:name=".ui.VoidActivity" />
         <activity android:name=".ui.RefundActivity" />
         <activity android:name=".ui.GetOrderActivity" />
         <activity android:name=".ui.ReceiptsActivity" />
-        <activity android:name=".ui.ResultActivity" />
         <activity android:name=".ui.DeviceActivity" />
         <activity android:name=".ui.SettlementActivity" />
 
@@ -69,6 +69,16 @@
             android:foregroundServiceType="connectedDevice">
             <intent-filter android:priority="1000">
                 <action android:name="com.payby.pos.ecr.demo.ClassicBTService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".ble.BLEService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice">
+            <intent-filter android:priority="1000">
+                <action android:name="com.payby.pos.ecr.demo.BLEService" />
             </intent-filter>
         </service>
 

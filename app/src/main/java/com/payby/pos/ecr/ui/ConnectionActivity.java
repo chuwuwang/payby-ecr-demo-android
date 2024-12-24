@@ -10,84 +10,92 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.kongzue.dialogx.dialogs.WaitDialog;
+import com.payby.pos.ecr.App;
 import com.payby.pos.ecr.R;
-import com.payby.pos.ecr.connect.ConnectType;
 import com.payby.pos.ecr.connect.ConnectService;
+import com.payby.pos.ecr.connect.ConnectType;
+import com.payby.pos.ecr.connect.ConnectionKernel;
+import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.RequestCallback;
 
 import java.util.List;
 
 public class ConnectionActivity extends BaseActivity {
 
-  private Button inAppConnectBtn;
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_connect_layout);
+        requestPermission();
 
-  @Override
-  protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_connect_layout);
-
-    boolean connected = ConnectService.INSTANCE.isConnected();
-    if (connected) {
-      Intent intent = new Intent(ConnectionActivity.this, MainActivity.class);
-      startActivity(intent);
-      finish();
-    } else {
-      initView();
-      ConnectService.INSTANCE.initPermission(this,requestCallback);
-    }
-    initView();
-  }
-
-  private void initView() {
-    findViewById(R.id.classic_bluetooth_connect_btn).setOnClickListener(this);
-    inAppConnectBtn = (Button) findViewById(R.id.inAppConnectBtn);
-    inAppConnectBtn.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        ConnectService.INSTANCE.setConnectCallback((it) -> {
-          if (it) {
-            runOnUiThread(WaitDialog::dismiss);
-
+        boolean connected = ConnectService.INSTANCE.isConnected();
+        if (connected) {
             Intent intent = new Intent(ConnectionActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
-          }
-          return null;
-        });
-        ConnectService.INSTANCE.connect(ConnectionActivity.this, ConnectType.IN_APP);
-
-      }
-    });
-  }
-
-  @Override
-  public void onClick(View view) {
-    final int id = view.getId();
-    if (id == R.id.classic_bluetooth_connect_btn) {
-      ConnectService.INSTANCE.setConnectCallback((it) -> {
-        if (it) {
-          runOnUiThread(WaitDialog::dismiss);
-
-          Intent intent = new Intent(ConnectionActivity.this, MainActivity.class);
-          startActivity(intent);
-          finish();
+        } else {
+            initView();
+            ConnectService.INSTANCE.initPermission(this, requestCallback);
         }
-        return null;
-      });
-      ConnectService.INSTANCE.connect(this, ConnectType.BLUETOOTH);
+        initView();
     }
-  }
 
-  private final RequestCallback requestCallback = new RequestCallback() {
+    private void initView() {
+        findViewById(R.id.bleConnectBtn).setOnClickListener(this);
+        findViewById(R.id.inAppConnectBtn).setOnClickListener(this);
+        findViewById(R.id.classicBTConnectBtn).setOnClickListener(this);
+
+        Button  inAppConnectBtn = (Button) findViewById(R.id.inAppConnectBtn);
+        inAppConnectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ConnectService.INSTANCE.setConnectCallback((it) -> {
+                    if (it) {
+                        runOnUiThread(WaitDialog::dismiss);
+
+                        Intent intent = new Intent(ConnectionActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    return null;
+                });
+                ConnectService.INSTANCE.connect(ConnectionActivity.this, ConnectType.IN_APP);
+
+            }
+        });
+    }
 
     @Override
-    public void onResult(boolean allGranted, @NonNull List<String> grantedList, @NonNull List<String> deniedList) {
-      Log.e("Demo", "onResult: allGranted = " + allGranted);
-      for (String permission : grantedList) {
-        Log.e("Demo", permission + " Granted");
-      }
+    public void onClick(View view) {
+        final int id = view.getId();
+        if (id == R.id.classicBTConnectBtn) {
+            ConnectionKernel.getInstance().connectWithClassicBT(this);
+        } else if (id == R.id.bleConnectBtn) {
+            ConnectionKernel.getInstance().connectWithBLE(this);
+        }
     }
 
-  };
+    private void requestPermission() {
+        PermissionX.init(this)
+            .permissions(
+                    android.Manifest.permission.BLUETOOTH,
+                    android.Manifest.permission.BLUETOOTH_ADMIN,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+            .request(requestCallback);
+    }
+
+    private final RequestCallback requestCallback = new RequestCallback() {
+
+        @Override
+        public void onResult(boolean allGranted, @NonNull List<String> grantedList, @NonNull List<String> deniedList) {
+            Log.e(App.TAG, "onResult: allGranted = " + allGranted);
+            for (String permission : grantedList) {
+                Log.e(App.TAG, permission + " Granted");
+            }
+        }
+
+    };
 
 }

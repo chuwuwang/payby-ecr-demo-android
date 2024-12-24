@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 
 import com.kongzue.dialogx.dialogs.BottomMenu;
-import com.kongzue.dialogx.dialogs.WaitDialog;
 import com.kongzue.dialogx.interfaces.OnMenuItemClickListener;
 import com.payby.pos.ecr.App;
 
@@ -29,12 +28,12 @@ public class BTOperate {
     public void findPairedBTDevices() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null) {
-          App.showToast("Bluetooth is not supported on this device");
+            App.showToast("Bluetooth is not supported on this device");
             return;
         }
         boolean enabled = adapter.isEnabled();
         if (enabled == false) {
-          App.showToast("Please turn on Bluetooth");
+            App.showToast("Please turn on Bluetooth");
             return;
         }
         Set<BluetoothDevice> bondedDevices = adapter.getBondedDevices();
@@ -50,7 +49,7 @@ public class BTOperate {
             }
             showBTSelectionDialog(bluetoothList);
         } else {
-          App.showToast("No paired Bluetooth devices found");
+            App.showToast("No paired Bluetooth devices found");
         }
     }
 
@@ -59,14 +58,27 @@ public class BTOperate {
 
             @Override
             public boolean onClick(BottomMenu dialog, CharSequence text, int index) {
-                WaitDialog.show("Connecting...");
                 BluetoothDevice device = mapBTDevice.get(text);
-                ClassicBTService.startAction(activity, ClassicBTService.ACTION_CONNECT, device);
+                if (selectionListener != null) {
+                    selectionListener.onSelectionBluetoothDevice(device);
+                }
                 return false;
             }
 
         };
         BottomMenu.show("Selection Bluetooth Device", list, listener);
+    }
+
+    public interface SelectionBluetoothDeviceListener {
+
+        void onSelectionBluetoothDevice(BluetoothDevice device);
+
+    }
+
+    private SelectionBluetoothDeviceListener selectionListener;
+
+    public void setSelectionListener(SelectionBluetoothDeviceListener listener) {
+        selectionListener = listener;
     }
 
 }
