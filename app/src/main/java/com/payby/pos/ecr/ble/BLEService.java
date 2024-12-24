@@ -46,7 +46,7 @@ public class BLEService extends Service {
         int action = intent.getIntExtra("extra_action", 0);
         BluetoothDevice bluetoothDevice = intent.getParcelableExtra("extra_bluetoothDevice");
         if (action == ACTION_CONNECT) {
-            BLEManager.getInstance().connect(bluetoothDevice);
+            BLEManager.getInstance().connect(this, bluetoothDevice);
         } else if (action == ACTION_DISCONNECT) {
             BLEManager.getInstance().disconnect();
         }

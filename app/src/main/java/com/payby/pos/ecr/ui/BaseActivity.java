@@ -8,6 +8,8 @@ import com.google.protobuf.Any;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.util.JsonFormat;
 import com.hjq.toast.Toaster;
+import com.payby.pos.ecr.connect.ConnectionKernel;
+import com.payby.pos.ecr.connect.ConnectionListener;
 import com.payby.pos.ecr.internal.processor.Processor;
 import com.uaepay.pos.ecr.Ecr;
 import com.uaepay.pos.ecr.acquire.Acquire;
@@ -18,9 +20,7 @@ import com.uaepay.pos.ecr.acquire.Settlement;
 public class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
     public void showToast(String message) {
-        runOnUiThread(
-                () -> Toaster.show(message)
-        );
+        runOnUiThread(() -> Toaster.show(message));
     }
 
     @Override
@@ -28,9 +28,55 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ConnectionKernel.getInstance().addListener(connectionListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ConnectionKernel.getInstance().removeListener(connectionListener);
+    }
+
+    private final ConnectionListener connectionListener = new ConnectionListener() {
+
+        @Override
+        public void onConnected() {
+            onDeviceConnected();
+        }
+
+        @Override
+        public void onDisconnected() {
+            onDeviceDisconnected();
+        }
+
+        @Override
+        public void onMessage(byte[] bytes) {
+            onReceiveMessage(bytes);
+        }
+
+    };
+
+    public void onDeviceConnected() {
+
+    }
+
+    public void onDeviceDisconnected() {
+
+    }
+
+    public void onReceiveMessage(byte[] bytes) {
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     public String parserResponse(Ecr.Response response) {
         try {
-           return response(response);
+            return response(response);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,7 +123,6 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         builder.append("responseCode: ").append(responseCode).append("\n");
         builder.append("subResponseCode: ").append(subResponseCode).append("\n");
         builder.append("errorMessage: ").append(errorMessage).append("\n");
-
 
         switch (serviceName) {
             case Processor.ACQUIRE_PLACE_ORDER: // purchase

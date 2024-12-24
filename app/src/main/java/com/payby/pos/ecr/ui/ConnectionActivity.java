@@ -27,17 +27,12 @@ public class ConnectionActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_layout);
         requestPermission();
-
-        boolean connected = ConnectService.INSTANCE.isConnected();
+        boolean connected = ConnectionKernel.getInstance().isConnected();
         if (connected) {
-            Intent intent = new Intent(ConnectionActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            gotoMainActivity();
         } else {
             initView();
-            ConnectService.INSTANCE.initPermission(this, requestCallback);
         }
-        initView();
     }
 
     private void initView() {
@@ -73,6 +68,24 @@ public class ConnectionActivity extends BaseActivity {
         } else if (id == R.id.bleConnectBtn) {
             ConnectionKernel.getInstance().connectWithBLE(this);
         }
+    }
+
+    @Override
+    public void onDeviceConnected() {
+        runOnUiThread(WaitDialog::dismiss);
+        gotoMainActivity();
+    }
+
+    @Override
+    public void onDeviceDisconnected() {
+        runOnUiThread(WaitDialog::dismiss);
+        showToast("Device disconnected");
+    }
+
+    private void gotoMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void requestPermission() {

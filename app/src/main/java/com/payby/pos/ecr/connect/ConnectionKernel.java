@@ -27,9 +27,24 @@ public class ConnectionKernel {
         return instance;
     }
 
+    public void addListener(ConnectionListener listener) {
+        if (connectType == ConnectType.BLUETOOTH) {
+            ClassicBTManager.getInstance().addListener(listener);
+        } else if (connectType == ConnectType.BLE) {
+            BLEManager.getInstance().addListener(listener);
+        }
+    }
+
+    public void removeListener(ConnectionListener listener) {
+        if (connectType == ConnectType.BLUETOOTH) {
+            ClassicBTManager.getInstance().removeListener(listener);
+        } else if (connectType == ConnectType.BLE) {
+            BLEManager.getInstance().removeListener(listener);
+        }
+    }
+
     public void connectWithClassicBT(Activity activity) {
         connectType = ConnectType.BLUETOOTH;
-        ClassicBTManager.getInstance().addListener(connectionListener);
         final BTOperate.SelectionBluetoothDeviceListener selectionListener = new BTOperate.SelectionBluetoothDeviceListener() {
 
             @Override
@@ -46,7 +61,6 @@ public class ConnectionKernel {
 
     public void connectWithBLE(Activity activity) {
         connectType = ConnectType.BLE;
-        BLEManager.getInstance().addListener(connectionListener);
         final BTOperate.SelectionBluetoothDeviceListener selectionListener = new BTOperate.SelectionBluetoothDeviceListener() {
 
             @Override
@@ -64,12 +78,18 @@ public class ConnectionKernel {
     public void disconnect() {
         if (connectType == ConnectType.BLUETOOTH) {
             ClassicBTManager.getInstance().disconnect();
-            ClassicBTManager.getInstance().removeListener(connectionListener);
             ClassicBTService.startAction(App.instance, ClassicBTService.ACTION_DISCONNECT, null);
         } else if (connectType == ConnectType.BLE) {
             BLEManager.getInstance().disconnect();
-            BLEManager.getInstance().removeListener(connectionListener);
             BLEService.startAction(App.instance, BLEService.ACTION_DISCONNECT, null);
+        }
+    }
+
+    public void send(byte[] data) {
+        if (connectType == ConnectType.BLUETOOTH) {
+            ClassicBTManager.getInstance().send(data);
+        } else if (connectType == ConnectType.BLE) {
+            BLEManager.getInstance().send(data);
         }
     }
 
@@ -81,24 +101,5 @@ public class ConnectionKernel {
         }
         return false;
     }
-
-    private final ConnectionListener connectionListener = new ConnectionListener() {
-
-        @Override
-        public void onConnected() {
-
-        }
-
-        @Override
-        public void onDisconnected() {
-
-        }
-
-        @Override
-        public void onMessage(byte[] bytes) {
-
-        }
-
-    };
 
 }

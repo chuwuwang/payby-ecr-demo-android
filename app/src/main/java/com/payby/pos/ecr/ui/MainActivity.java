@@ -2,20 +2,12 @@ package com.payby.pos.ecr.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.hjq.permissions.OnPermissionCallback;
-import com.hjq.permissions.XXPermissions;
-import com.payby.pos.ecr.App;
 import com.payby.pos.ecr.R;
-import com.payby.pos.ecr.connect.ConnectService;
-import com.payby.pos.ecr.utils.ActivityManager;
 import com.payby.pos.ecr.utils.Utils;
-
-import java.util.List;
 
 public class MainActivity extends BaseActivity {
 
@@ -23,11 +15,10 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
-        checkPermissions();
-        initClick();
+        initView();
     }
 
-    private void initClick() {
+    private void initView() {
         findViewById(R.id.widget_btn_sale).setOnClickListener(this);
         findViewById(R.id.widget_btn_void).setOnClickListener(this);
         findViewById(R.id.widget_btn_refund).setOnClickListener(this);
@@ -39,14 +30,6 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.widget_btn_print_refund_receipt).setOnClickListener(this);
         findViewById(R.id.getDeviceInfo).setOnClickListener(this);
         findViewById(R.id.settlement).setOnClickListener(this);
-
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ConnectService.INSTANCE.disconnect();
     }
 
     @Override
@@ -83,38 +66,25 @@ public class MainActivity extends BaseActivity {
     }
 
     private void getDeviceInfo() {
-        Intent intent = new Intent(MainActivity.this, DeviceActivity.class);
+        Intent intent = new Intent(this, DeviceInfoActivity.class);
         startActivity(intent);
     }
 
     private void doSale() {
-        Intent intent = new Intent(MainActivity.this, SaleActivity.class);
+        Intent intent = new Intent(this, SaleActivity.class);
         startActivity(intent);
     }
 
     private void getOrder(int type) {
-        Intent intent = new Intent(MainActivity.this, GetOrderActivity.class);
+        Intent intent = new Intent(this, GetOrderActivity.class);
         intent.putExtra("order_type", type);
         startActivity(intent);
     }
 
     private void doReceipt(int type) {
-        Intent intent = new Intent(MainActivity.this, ReceiptsActivity.class);
+        Intent intent = new Intent(this, ReceiptsActivity.class);
         intent.putExtra("receipts_type", type);
         startActivity(intent);
     }
 
-
-    private void checkPermissions() {
-        XXPermissions
-                .with(this)
-                .permission(com.hjq.permissions.Permission.ACCESS_FINE_LOCATION)
-                .permission(com.hjq.permissions.Permission.ACCESS_COARSE_LOCATION)
-                .permission(com.hjq.permissions.Permission.CAMERA).request(new OnPermissionCallback() {
-                    @Override
-                    public void onGranted(List<String> permissions, boolean all) {
-
-                    }
-                });
-    }
 }

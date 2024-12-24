@@ -59,8 +59,8 @@
         <activity android:name=".ui.RefundActivity" />
         <activity android:name=".ui.GetOrderActivity" />
         <activity android:name=".ui.ReceiptsActivity" />
-        <activity android:name=".ui.DeviceActivity" />
         <activity android:name=".ui.SettlementActivity" />
+        <activity android:name=".ui.DeviceInfoActivity" />
 
         <service
             android:name=".bluetooth.ClassicBTService"

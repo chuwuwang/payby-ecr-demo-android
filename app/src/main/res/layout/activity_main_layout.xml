@@ -67,10 +67,10 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-      android:visibility="gone"
         android:text="Get Acquire Order Receipt"
         android:textAllCaps="false"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/widget_btn_print_order_receipt"
@@ -91,9 +91,9 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:text="Get Refund Order Receipt"
-        android:visibility="gone"
         android:textAllCaps="false"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/widget_btn_print_refund_receipt"
@@ -106,25 +106,26 @@
         android:textAllCaps="false"
         android:textSize="16sp" />
 
-  <Button
-    android:id="@+id/getDeviceInfo"
-    android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="16dp"
-    android:text="Device info"
-    android:textAllCaps="false"
-    android:textSize="16sp" />
+    <Button
+        android:id="@+id/getDeviceInfo"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="Device info"
+        android:textAllCaps="false"
+        android:textSize="16sp" />
 
-  <Button
-    android:id="@+id/settlement"
-    android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="16dp"
-    android:text="Settlement "
-    android:textAllCaps="false"
-    android:textSize="16sp" />
+    <Button
+        android:id="@+id/settlement"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="Settlement "
+        android:textAllCaps="false"
+        android:textSize="16sp" />
+
 </LinearLayout>
