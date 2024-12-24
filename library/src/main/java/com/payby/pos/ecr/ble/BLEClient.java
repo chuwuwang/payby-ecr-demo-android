@@ -22,9 +22,9 @@ public class BLEClient extends BleManager {
 
     private static final String TAG = "BLE-Client";
 
-    private static final UUID SERVICE_UUID = UUID.fromString("80323644-3537-4F0B-A53B-CF494ECEAAB3");
+    private static final UUID SERVICE_UUID = UUID.fromString("FE72265A-0F16-4B45-B6B7-95889930140A");
 
-    private static final UUID CHARACTERISTIC_UUID = UUID.fromString("80323644-3537-4F0B-A53B-CF494ECEAAB3");
+    private static final UUID CHARACTERISTIC_UUID = UUID.fromString("FE72265B-0F16-4B45-B6B7-95889930140A");
 
     private BluetoothGattCharacteristic myCharacteristic;
 
@@ -85,7 +85,10 @@ public class BLEClient extends BleManager {
 
     @Override
     protected void initialize() {
+        requestMtu(512).enqueue();
+
         setNotificationCallback(myCharacteristic).with(dataReceivedCallback);
+
         WriteRequest request = enableNotifications(myCharacteristic).fail(failCallback);
         beginAtomicRequestQueue().add(request).done(successCallback).enqueue();
     }
@@ -96,10 +99,8 @@ public class BLEClient extends BleManager {
         BluetoothGattService service = gatt.getService(SERVICE_UUID);
         if (service != null) {
             myCharacteristic = service.getCharacteristic(CHARACTERISTIC_UUID);
-            int myCharacteristicProperties = myCharacteristic.getProperties();
-            return (myCharacteristicProperties & BluetoothGattCharacteristic.PROPERTY_READ) != 0 && (myCharacteristicProperties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0;
         }
-        return super.isRequiredServiceSupported(gatt);
+        return myCharacteristic != null;
     }
 
     @Override
