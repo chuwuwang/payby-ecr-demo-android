@@ -30,17 +30,11 @@ public class ClassicBTManager {
     private final List<ConnectionListener> callbacks = new ArrayList<>();
 
     public void connect(BluetoothDevice device) {
-        boolean connected = isConnected();
-        if (connected) {
-            Log.e(TAG, "The ClassicBT device is already connected");
-            for (ConnectionListener listener : callbacks) {
-                listener.onConnected();
-            }
-        } else {
+        if (classicBTClient == null) {
             classicBTClient = new ClassicBTClient(device);
             classicBTClient.setListener(listener);
-            classicBTClient.connect();
         }
+        classicBTClient.connect();
     }
 
     public void disconnect() {

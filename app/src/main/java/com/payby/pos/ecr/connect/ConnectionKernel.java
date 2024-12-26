@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import com.kongzue.dialogx.dialogs.WaitDialog;
 import com.payby.pos.ecr.App;
 import com.payby.pos.ecr.ble.BLEManager;
+import com.payby.pos.ecr.ble.BLEOperate;
 import com.payby.pos.ecr.ble.BLEService;
 import com.payby.pos.ecr.bluetooth.BTOperate;
 import com.payby.pos.ecr.bluetooth.ClassicBTManager;
@@ -61,7 +62,7 @@ public class ConnectionKernel {
 
     public void connectWithBLE(Activity activity) {
         connectType = ConnectType.BLE;
-        final BTOperate.SelectionBluetoothDeviceListener selectionListener = new BTOperate.SelectionBluetoothDeviceListener() {
+        final BLEOperate.SelectionBluetoothDeviceListener selectionListener = new BLEOperate.SelectionBluetoothDeviceListener() {
 
             @Override
             public void onSelectionBluetoothDevice(BluetoothDevice device) {
@@ -70,9 +71,9 @@ public class ConnectionKernel {
             }
 
         };
-        BTOperate operate = new BTOperate(activity);
+        BLEOperate operate = new BLEOperate(activity);
         operate.setSelectionListener(selectionListener);
-        operate.findPairedBTDevices();
+        operate.startSearch();
     }
 
     public void disconnect() {

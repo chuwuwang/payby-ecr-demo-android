@@ -31,22 +31,16 @@ public class BLEManager {
     private final List<ConnectionListener> callbacks = new ArrayList<>();
 
     public void connect(Context context, BluetoothDevice device) {
-        boolean connected = isConnected();
-        if (connected) {
-            Log.e(TAG, "The BLE device is already connected");
-            for (ConnectionListener listener : callbacks) {
-                listener.onConnected();
-            }
-        } else {
+        if (bleClient == null) {
             bleClient = new BLEClient(context, device);
             bleClient.setListener(listener);
-            bleClient.connect();
         }
+        bleClient.deviceConnect();
     }
 
     public void disconnect() {
         if (bleClient != null) {
-            bleClient.close();
+            bleClient.deviceDisconnect();
             bleClient.setListener(null);
         }
         bleClient = null;

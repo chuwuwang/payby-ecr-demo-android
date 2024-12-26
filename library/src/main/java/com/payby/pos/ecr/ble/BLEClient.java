@@ -22,9 +22,9 @@ public class BLEClient extends BleManager {
 
     private static final String TAG = "BLE-Client";
 
-    private static final UUID SERVICE_UUID = UUID.fromString("FE72265A-0F16-4B45-B6B7-95889930140A");
+    public static final UUID SERVICE_UUID = UUID.fromString("FE72265A-0F16-4B45-B6B7-95889930140A");
 
-    private static final UUID CHARACTERISTIC_UUID = UUID.fromString("FE72265B-0F16-4B45-B6B7-95889930140A");
+    public static final UUID CHARACTERISTIC_UUID = UUID.fromString("FE72265B-0F16-4B45-B6B7-95889930140A");
 
     private BluetoothGattCharacteristic myCharacteristic;
 
@@ -42,7 +42,7 @@ public class BLEClient extends BleManager {
         bluetoothDevice = device;
     }
 
-    public void connect() {
+    public void deviceConnect() {
         boolean connected = isDeviceConnected();
         if (connected) {
             if (listener != null) {
@@ -60,13 +60,17 @@ public class BLEClient extends BleManager {
         connect(bluetoothDevice).useAutoConnect(true).enqueue();
     }
 
-    public boolean isDeviceConnected() {
-        boolean ready = isReady();
-        boolean connected = isConnected();
-        Log.e(TAG, "isDeviceConnected --> isReady: " + ready + " isConnected:" + connected);
-        return ready;
+    public void deviceDisconnect() {
+        cancelQueue();
+        disconnect().enqueue();
+        close();
     }
 
+    /**
+     * The data is split into MTU size packets using packet splitter [PacketSplitter.chunk] before sending it to the server.
+     *
+     * @param bytes
+     */
     public void send(byte[] bytes) {
         try {
             boolean connected = isDeviceConnected();
@@ -83,11 +87,21 @@ public class BLEClient extends BleManager {
         }
     }
 
+    public boolean isDeviceConnected() {
+        boolean ready = isReady();
+        boolean connected = isConnected();
+        Log.e(TAG, "isDeviceConnected --> isReady: " + ready + " isConnected:" + connected);
+        return ready;
+    }
+
     @Override
     protected void initialize() {
+        // request Mtu-512
         requestMtu(512).enqueue();
 
-        setNotificationCallback(myCharacteristic).with(dataReceivedCallback);
+        // Merges packets until the entire text is present in the stream [PacketMerger.merge]
+        PacketMerger packetMerger = new PacketMerger();
+        setNotificationCallback(myCharacteristic).merge(packetMerger).with(dataReceivedCallback);
 
         WriteRequest request = enableNotifications(myCharacteristic).fail(failCallback);
         beginAtomicRequestQueue().add(request).done(successCallback).enqueue();
@@ -121,7 +135,6 @@ public class BLEClient extends BleManager {
             byte[] bytes = data.getValue();
             String string = new String(bytes);
             Log.e(TAG, "onDataReceived: " + string);
-
         }
 
     };
@@ -133,6 +146,7 @@ public class BLEClient extends BleManager {
             String info = getDeviceInfo(device);
             Log.e(TAG, "onRequestFailed Could not subscribe: " + status + " " + info);
             disconnect().enqueue();
+            connecting = false;
         }
 
     };
@@ -146,6 +160,7 @@ public class BLEClient extends BleManager {
             if (listener != null) {
                 listener.onConnected();
             }
+            connecting = false;
         }
 
     };

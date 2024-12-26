@@ -1,5 +1,6 @@
 package com.payby.pos.ecr.ui;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +38,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStop() {
         super.onStop();
+        Log.e("BaseActivity", "onStop");
         ConnectionKernel.getInstance().removeListener(connectionListener);
     }
 
