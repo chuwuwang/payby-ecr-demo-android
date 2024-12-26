@@ -27,7 +27,7 @@ object ConnectService {
     this.connectType =connectType
     when (connectType) {
       ConnectType.BLUETOOTH -> {
-        ClassicBTManager.getInstance().addListener(connectionListener)
+        // ClassicBTManager.getInstance().addListener(connectionListener)
         BTOperate(context).findPairedBTDevices()
       }
 
@@ -52,7 +52,7 @@ object ConnectService {
       ConnectType.BLUETOOTH -> {
         val connected = ClassicBTManager.getInstance().isConnected
         if (connected) {
-          ClassicBTManager.getInstance().removeListener(connectionListener)
+          // ClassicBTManager.getInstance().removeListener(connectionListener)
           ClassicBTManager.getInstance().disconnect()
           ClassicBTService.startAction(App.instance, ClassicBTService.ACTION_DISCONNECT, null)
         }

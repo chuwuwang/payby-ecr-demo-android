@@ -4,11 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.util.Log;
 
-import com.payby.pos.ecr.connect.ConnectionListener;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.payby.pos.ecr.connect.ConnectionKernel;
 
 public class BLEManager {
 
@@ -28,7 +24,6 @@ public class BLEManager {
 
     private BLEClient bleClient;
 
-    private final List<ConnectionListener> callbacks = new ArrayList<>();
 
     public void connect(Context context, BluetoothDevice device) {
         if (bleClient == null) {
@@ -56,23 +51,12 @@ public class BLEManager {
         return bleClient != null && bleClient.isDeviceConnected();
     }
 
-    public void addListener(ConnectionListener listener) {
-        callbacks.add(listener);
-    }
-
-    public void removeListener(ConnectionListener listener) {
-        callbacks.remove(listener);
-    }
-
     private final BLEClientListener listener = new BLEClientListener() {
 
         @Override
         public void onConnected() {
             Log.e(TAG, "BLE client onConnected");
-            List<ConnectionListener> synchronizededList = Collections.synchronizedList(callbacks);
-            for (ConnectionListener listener : synchronizededList) {
-                listener.onConnected();
-            }
+            ConnectionKernel.getInstance().onConnected();
         }
 
         @Override
@@ -83,18 +67,12 @@ public class BLEManager {
         @Override
         public void onDisconnected() {
             Log.e(TAG, "BLE client onDisconnected");
-            List<ConnectionListener> synchronizededList = Collections.synchronizedList(callbacks);
-            for (ConnectionListener listener : synchronizededList) {
-                listener.onDisconnected();
-            }
+            ConnectionKernel.getInstance().onDisconnected();
         }
 
         @Override
         public void onMessage(byte[] bytes) {
-            List<ConnectionListener> synchronizededList = Collections.synchronizedList(callbacks);
-            for (ConnectionListener listener : synchronizededList) {
-                listener.onMessage(bytes);
-            }
+            ConnectionKernel.getInstance().onReceived(bytes);
         }
 
     };

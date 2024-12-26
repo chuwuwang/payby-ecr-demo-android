@@ -1,6 +1,5 @@
 package com.payby.pos.ecr.ui;
 
-import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +20,9 @@ import com.uaepay.pos.ecr.acquire.Settlement;
 public class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
     public void showToast(String message) {
-        runOnUiThread(() -> Toaster.show(message));
+        runOnUiThread(
+            () -> Toaster.show(message)
+        );
     }
 
     @Override
@@ -38,7 +39,6 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStop() {
         super.onStop();
-        Log.e("BaseActivity", "onStop");
         ConnectionKernel.getInstance().removeListener(connectionListener);
     }
 

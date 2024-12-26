@@ -3,11 +3,7 @@ package com.payby.pos.ecr.bluetooth;
 import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 
-import com.payby.pos.ecr.connect.ConnectionListener;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.payby.pos.ecr.connect.ConnectionKernel;
 
 public class ClassicBTManager {
 
@@ -26,8 +22,6 @@ public class ClassicBTManager {
     }
 
     private ClassicBTClient classicBTClient;
-
-    private final List<ConnectionListener> callbacks = new ArrayList<>();
 
     public void connect(BluetoothDevice device) {
         if (classicBTClient == null) {
@@ -55,45 +49,28 @@ public class ClassicBTManager {
         return classicBTClient != null && classicBTClient.isConnected();
     }
 
-    public void addListener(ConnectionListener listener) {
-        callbacks.add(listener);
-    }
-
-    public void removeListener(ConnectionListener listener) {
-        callbacks.remove(listener);
-    }
-
     private final ClassicBTClientListener listener = new ClassicBTClientListener() {
 
         @Override
         public void onConnected() {
-            Log.e(TAG, "Connected");
-            List<ConnectionListener> synchronizededList = Collections.synchronizedList(callbacks);
-            for (ConnectionListener listener : synchronizededList) {
-                listener.onConnected();
-            }
+            Log.e(TAG, "ClassicBT client onConnected");
+            ConnectionKernel.getInstance().onConnected();
         }
 
         @Override
         public void onConnecting() {
-            Log.e(TAG, "Connecting");
+            Log.e(TAG, "ClassicBT client onConnecting");
         }
 
         @Override
         public void onDisconnected() {
-            Log.e(TAG, "Disconnected");
-            List<ConnectionListener> synchronizededList = Collections.synchronizedList(callbacks);
-            for (ConnectionListener listener : synchronizededList) {
-                listener.onDisconnected();
-            }
+            Log.e(TAG, "ClassicBT client onDisconnected");
+            ConnectionKernel.getInstance().onDisconnected();
         }
 
         @Override
         public void onMessage(byte[] bytes) {
-            List<ConnectionListener> synchronizededList = Collections.synchronizedList(callbacks);
-            for (ConnectionListener listener : synchronizededList) {
-                listener.onMessage(bytes);
-            }
+            ConnectionKernel.getInstance().onReceived(bytes);
         }
 
     };

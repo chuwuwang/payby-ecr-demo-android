@@ -47,10 +47,10 @@ public class DeviceInfoActivity extends BaseActivity {
                 .setRequest(request)
                 .build();
         byte[] bytes = envelope.toByteArray();
-
         WaitDialog.show("Precessing...");
-
-        ConnectionKernel.getInstance().send(bytes);
+        new Thread(
+            () -> ConnectionKernel.getInstance().send(bytes)
+        ).start();
     }
 
 }

@@ -12,6 +12,10 @@ import com.payby.pos.ecr.bluetooth.BTOperate;
 import com.payby.pos.ecr.bluetooth.ClassicBTManager;
 import com.payby.pos.ecr.bluetooth.ClassicBTService;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class ConnectionKernel {
 
     private ConnectType connectType;
@@ -28,21 +32,39 @@ public class ConnectionKernel {
         return instance;
     }
 
+    private final List<ConnectionListener> callbacks = new ArrayList<>();
+
     public void addListener(ConnectionListener listener) {
-        if (connectType == ConnectType.BLUETOOTH) {
-            ClassicBTManager.getInstance().addListener(listener);
-        } else if (connectType == ConnectType.BLE) {
-            BLEManager.getInstance().addListener(listener);
-        }
+        callbacks.add(listener);
     }
 
     public void removeListener(ConnectionListener listener) {
-        if (connectType == ConnectType.BLUETOOTH) {
-            ClassicBTManager.getInstance().removeListener(listener);
-        } else if (connectType == ConnectType.BLE) {
-            BLEManager.getInstance().removeListener(listener);
+        callbacks.remove(listener);
+    }
+
+    public void onConnected() {
+        List<ConnectionListener> synchronizededList = Collections.synchronizedList(callbacks);
+        for (ConnectionListener listener : synchronizededList) {
+            listener.onConnected();
         }
     }
+
+    public void onDisconnected() {
+        List<ConnectionListener> synchronizededList = Collections.synchronizedList(callbacks);
+        for (ConnectionListener listener : synchronizededList) {
+            listener.onDisconnected();
+        }
+    }
+
+    public void onReceived(byte[] bytes) {
+        List<ConnectionListener> synchronizededList = Collections.synchronizedList(callbacks);
+        for (ConnectionListener listener : synchronizededList) {
+            listener.onMessage(bytes);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public void connectWithClassicBT(Activity activity) {
         connectType = ConnectType.BLUETOOTH;
@@ -66,11 +88,11 @@ public class ConnectionKernel {
 
             @Override
             public void onSelectionBluetoothDevice(BluetoothDevice device) {
-                WaitDialog.show("Connecting...");
                 BLEService.startAction(activity, BLEService.ACTION_CONNECT, device);
             }
 
         };
+        WaitDialog.show("Connecting...");
         BLEOperate operate = new BLEOperate(activity);
         operate.setSelectionListener(selectionListener);
         operate.startSearch();
@@ -78,10 +100,8 @@ public class ConnectionKernel {
 
     public void disconnect() {
         if (connectType == ConnectType.BLUETOOTH) {
-            ClassicBTManager.getInstance().disconnect();
             ClassicBTService.startAction(App.instance, ClassicBTService.ACTION_DISCONNECT, null);
         } else if (connectType == ConnectType.BLE) {
-            BLEManager.getInstance().disconnect();
             BLEService.startAction(App.instance, BLEService.ACTION_DISCONNECT, null);
         }
     }

@@ -75,7 +75,7 @@ public class VoidActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ClassicBTManager.getInstance().removeListener(connectionListener);
+        // ClassicBTManager.getInstance().removeListener(connectionListener);
     }
 
     @Override

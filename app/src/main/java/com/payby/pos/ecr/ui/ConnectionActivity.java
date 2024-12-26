@@ -92,7 +92,9 @@ public class ConnectionActivity extends BaseActivity {
         PermissionX.init(this)
             .permissions(
                     android.Manifest.permission.BLUETOOTH,
+                    android.Manifest.permission.BLUETOOTH_SCAN,
                     android.Manifest.permission.BLUETOOTH_ADMIN,
+                    android.Manifest.permission.BLUETOOTH_ADVERTISE,
                     android.Manifest.permission.ACCESS_FINE_LOCATION,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION
             )

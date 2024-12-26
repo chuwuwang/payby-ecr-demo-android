@@ -11,6 +11,7 @@ import android.bluetooth.le.ScanSettings;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import com.kongzue.dialogx.dialogs.WaitDialog;
 import com.payby.pos.ecr.App;
 
 import java.util.Collections;
@@ -69,6 +70,7 @@ public class BLEOperate {
         public void onScanFailed(int errorCode) {
             super.onScanFailed(errorCode);
             Log.e(App.TAG, "onScanFailed: " + errorCode);
+            activity.runOnUiThread(WaitDialog::dismiss);
         }
 
     };

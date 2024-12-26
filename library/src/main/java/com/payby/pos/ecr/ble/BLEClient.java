@@ -73,10 +73,12 @@ public class BLEClient extends BleManager {
      */
     public void send(byte[] bytes) {
         try {
+            String string = new String(bytes);
+            Log.e(TAG, "send --> " + string);
             boolean connected = isDeviceConnected();
             if (connected) {
                 PacketSplitter splitter = new PacketSplitter();
-                writeCharacteristic(myCharacteristic, bytes, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT).split(splitter);
+                writeCharacteristic(myCharacteristic, bytes, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT).split(splitter).with()
             } else {
                 if (listener != null) {
                     listener.onDisconnected();
@@ -101,10 +103,9 @@ public class BLEClient extends BleManager {
 
         // Merges packets until the entire text is present in the stream [PacketMerger.merge]
         PacketMerger packetMerger = new PacketMerger();
-        setNotificationCallback(myCharacteristic).merge(packetMerger).with(dataReceivedCallback);
+        setNotificationCallback(myCharacteristic).merge(packetMerger);
 
-        WriteRequest request = enableNotifications(myCharacteristic).fail(failCallback);
-        beginAtomicRequestQueue().add(request).done(successCallback).enqueue();
+        enableNotifications(myCharacteristic).fail(failCallback).done(successCallback).enqueue();
     }
 
     @Override
@@ -120,6 +121,9 @@ public class BLEClient extends BleManager {
     @Override
     public void log(int priority, @NonNull String message) {
         Log.e(TAG, "log --> " + message);
+        if (message.contains("GATT ERROR") && isConnected() == false && listener != null) {
+            listener.onDisconnected();
+        }
     }
 
     @Override
