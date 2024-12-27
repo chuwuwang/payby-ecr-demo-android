@@ -13,7 +13,6 @@ import java.util.UUID;
 
 import no.nordicsemi.android.ble.BleManager;
 import no.nordicsemi.android.ble.callback.DataReceivedCallback;
-import no.nordicsemi.android.ble.callback.DataSentCallback;
 import no.nordicsemi.android.ble.callback.FailCallback;
 import no.nordicsemi.android.ble.callback.SuccessCallback;
 import no.nordicsemi.android.ble.data.Data;
@@ -22,8 +21,8 @@ public class BLEClient extends BleManager {
 
     private static final String TAG = "BLE-Client";
 
-    public static final UUID SERVICE_UUID = UUID.fromString("FE72265A-0F16-4B45-B6B7-95889930140A");
-    public static final UUID CHARACTERISTIC_UUID = UUID.fromString("FE72265B-0F16-4B45-B6B7-95889930140A");
+    public static final UUID SERVICE_UUID = UUID.fromString("80323644-3537-4F0B-A53B-CF494ECEAAB3");
+    public static final UUID CHARACTERISTIC_UUID = UUID.fromString("80323645-3537-4F0B-A53B-CF494ECEAAB3");
 
     private boolean connecting = false;
     private final BluetoothDevice bluetoothDevice;
@@ -74,11 +73,14 @@ public class BLEClient extends BleManager {
         try {
             boolean connected = isDeviceConnected();
             if (connected) {
+                logging(bytes, "<--- BLE Client send");
+                final SuccessCallback successCallback = device -> Log.e(TAG, "<--- BLE Client send success");
+                final FailCallback failCallback = (device, status) -> Log.e(TAG, "<--- BLE Client send failure: " + status);
                 PacketSplitter splitter = new PacketSplitter();
                 writeCharacteristic(characteristic, bytes, BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE)
                         .split(splitter)
-                        .with(sendDataCallback)
-                        .fail(sendDataFailCallback)
+                        .fail(failCallback)
+                        .done(successCallback)
                         .enqueue();
             } else {
                 if (listener != null) {
@@ -89,25 +91,6 @@ public class BLEClient extends BleManager {
             e.printStackTrace();
         }
     }
-
-    private final DataSentCallback sendDataCallback = new DataSentCallback() {
-
-        @Override
-        public void onDataSent(@NonNull BluetoothDevice device, @NonNull Data data) {
-            byte[] bytes = data.getValue();
-            logging(bytes, "<--- BLE Client send");
-        }
-
-    };
-
-    private final FailCallback sendDataFailCallback = new FailCallback() {
-
-        @Override
-        public void onRequestFailed(@NonNull BluetoothDevice device, int status) {
-            Log.e(TAG, "<--- BLE Client failure: " + status);
-        }
-
-    };
 
     public boolean isDeviceConnected() {
         boolean ready = isReady();
@@ -150,29 +133,19 @@ public class BLEClient extends BleManager {
         };
         setNotificationCallback(characteristic).merge(merger).with(dataReceivedCallback);
 
-        final FailCallback failCallback = new FailCallback() {
-
-            @Override
-            public void onRequestFailed(@NonNull BluetoothDevice device, int status) {
-                String info = getDeviceInfo(device);
-                Log.e(TAG, "BLE Client onRequestFailed could not subscribe: " + status + " " + info);
-                disconnect().enqueue();
-                connecting = false;
-            }
-
+        final FailCallback failCallback = (device, status) -> {
+            String info = getDeviceInfo(device);
+            Log.e(TAG, "BLE Client onRequestFailed could not subscribe: " + status + " " + info);
+            connecting = false;
+            disconnect().enqueue();
         };
-        final SuccessCallback successCallback = new SuccessCallback() {
-
-            @Override
-            public void onRequestCompleted(@NonNull BluetoothDevice device) {
-                String info = getDeviceInfo(device);
-                Log.e(TAG, "BLE Client onRequestCompleted target initialized " + info);
-                if (listener != null) {
-                    listener.onConnected();
-                }
-                connecting = false;
+        final SuccessCallback successCallback = device -> {
+            String info = getDeviceInfo(device);
+            Log.e(TAG, "BLE Client onRequestCompleted target initialized " + info);
+            if (listener != null) {
+                listener.onConnected();
             }
-
+            connecting = false;
         };
         enableNotifications(characteristic).fail(failCallback).done(successCallback).enqueue();
     }
@@ -180,14 +153,6 @@ public class BLEClient extends BleManager {
     @Override
     public void log(int priority, @NonNull String message) {
         Log.e(TAG, "BLE Client log --> " + message);
-        if (message.contains("GATT ERROR") && listener != null && isConnected() == false) {
-            listener.onDisconnected();
-        }
-    }
-
-    @Override
-    public int getMinLogPriority() {
-        return Log.VERBOSE;
     }
 
     @Override
@@ -204,9 +169,7 @@ public class BLEClient extends BleManager {
         String address = device.getAddress();
         try {
             return device.getName() + ": " + address;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { }
         return address;
     }
 
@@ -214,9 +177,7 @@ public class BLEClient extends BleManager {
         try {
             String string = new String(bytes);
             Log.e(TAG, message + ": " + string);
-        } catch (Exception e) {
-            //
-        }
+        } catch (Exception e) { }
     }
 
 }

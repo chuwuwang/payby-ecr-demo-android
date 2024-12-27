@@ -1,15 +1,18 @@
 package com.payby.pos.ecr.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
 import com.google.protobuf.Timestamp;
 import com.kongzue.dialogx.dialogs.WaitDialog;
+import com.payby.pos.ecr.App;
 import com.payby.pos.ecr.R;
 import com.payby.pos.ecr.connect.ConnectionKernel;
 import com.payby.pos.ecr.internal.processor.Processor;
+import com.payby.pos.ecr.utils.ThreadPoolManager;
 import com.uaepay.pos.ecr.Ecr;
 
 public class DeviceInfoActivity extends BaseActivity {
@@ -48,9 +51,15 @@ public class DeviceInfoActivity extends BaseActivity {
                 .build();
         byte[] bytes = envelope.toByteArray();
         WaitDialog.show("Precessing...");
-        new Thread(
-            () -> ConnectionKernel.getInstance().send(bytes)
-        ).start();
+        ThreadPoolManager.executeCacheTask(
+                () -> ConnectionKernel.getInstance().send(bytes)
+        );
+    }
+
+    @Override
+    public void onReceiveMessage(byte[] bytes) {
+        runOnUiThread(WaitDialog::dismiss);
+        Log.e(App.TAG, "onReceiveMessage ---------------");
     }
 
 }
