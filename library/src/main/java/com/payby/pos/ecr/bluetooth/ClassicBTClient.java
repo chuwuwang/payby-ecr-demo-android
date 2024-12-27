@@ -34,6 +34,7 @@ public class ClassicBTClient implements Runnable {
     public void connect() {
         boolean connected = isConnected();
         if (connected) {
+            connecting = false;
             if (listener != null) {
                 listener.onConnected();
             }
@@ -54,7 +55,7 @@ public class ClassicBTClient implements Runnable {
 
     public void send(byte[] bytes) {
         try {
-            if (btSocket != null && btSocket.isConnected() && outputStream != null) {
+            if (isConnected() && outputStream != null) {
                 logging(bytes, "<--- BTClient send");
                 outputStream.write(bytes);
                 outputStream.flush();
