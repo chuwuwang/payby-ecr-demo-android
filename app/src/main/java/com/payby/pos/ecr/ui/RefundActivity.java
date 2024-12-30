@@ -150,7 +150,6 @@ public class RefundActivity extends BaseActivity {
             if (errorCode == ScanUtil.SUCCESS) {
                 HmsScan scan = data.getParcelableExtra(ScanUtil.RESULT);
                 if (scan != null) {
-                    Log.e("测试", "结果微；"+scan.originalValue);
                     // 展示扫码结果
                    runOnUiThread(new Runnable() {
                        @Override
