@@ -5,7 +5,7 @@
   android:layout_height="match_parent">
 
   <EditText
-    android:id="@+id/edit_input_money"
+    android:id="@+id/edit_input_operator_id"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:hint="Input operatorId"

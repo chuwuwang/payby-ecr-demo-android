@@ -53,7 +53,7 @@ public class VoidActivity extends BaseActivity {
               () -> {
                 String string = textReceive.getText().toString();
                 textReceive.setText(string + "\n" + message);
-                ResultActivity.Companion.start(VoidActivity.this,string + "\n" + message);
+                ResultActivity.start(VoidActivity.this,string + "\n" + message);
 
               }
           );
@@ -117,11 +117,6 @@ public class VoidActivity extends BaseActivity {
         Ecr.Request request = Ecr.Request.newBuilder().setMessageId(2).setTimestamp(timestamp).setServiceName(Processor.VOID_PLACE_ORDER).setBody(body).build();
         Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.newBuilder().setVersion(1).setRequest(request).build();
         byte[] byteArray = envelope.toByteArray();
-//      ConnectService.INSTANCE.send(byteArray, bytes -> {
-//        runOnUiThread(WaitDialog::dismiss);
-//        processor.messageHandle(bytes);
-//        return null;
-//      });
         ConnectionKernel.getInstance().send(byteArray);
     }
 

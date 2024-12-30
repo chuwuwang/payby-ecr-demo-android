@@ -69,7 +69,7 @@ public class SaleActivity extends BaseActivity {
                         () -> {
                             String string = textReceive.getText().toString();
                             textReceive.setText(string + "\n" + message);
-                            ResultActivity.Companion.start(SaleActivity.this, textReceive.getText().toString());
+                            ResultActivity.start(SaleActivity.this, textReceive.getText().toString());
 
                         }
                 );
@@ -86,7 +86,7 @@ public class SaleActivity extends BaseActivity {
                         () -> {
                             String string = textReceive.getText().toString();
                             textReceive.setText(string + "\n" + message);
-                            ResultActivity.Companion.start(SaleActivity.this, textReceive.getText().toString());
+                            ResultActivity.start(SaleActivity.this, textReceive.getText().toString());
 
                         }
                 );
@@ -211,13 +211,6 @@ public class SaleActivity extends BaseActivity {
         Ecr.Request request = Ecr.Request.newBuilder().setMessageId(1).setTimestamp(timestamp).setServiceName(Processor.ACQUIRE_PLACE_ORDER).setBody(body).build();
         Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.newBuilder().setVersion(1).setRequest(request).build();
         byte[] byteArray = envelope.toByteArray();
-//        ConnectService.INSTANCE.send(byteArray, bytes -> {
-//            runOnUiThread(WaitDialog::dismiss);
-//            processor.messageHandle(bytes);
-//            parseEnvelopeRequest(bytes);
-//
-//            return null;
-//        });
         ConnectionKernel.getInstance().send(byteArray);
     }
 
