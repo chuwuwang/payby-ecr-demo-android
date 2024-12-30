@@ -15,8 +15,10 @@ import com.huawei.hms.hmsscankit.ScanUtil;
 import com.huawei.hms.ml.scan.HmsScan;
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
 import com.kongzue.dialogx.dialogs.WaitDialog;
+import com.payby.pos.ecr.App;
 import com.payby.pos.ecr.R;
 import com.payby.pos.ecr.connect.ConnectService;
+import com.payby.pos.ecr.connect.ConnectionKernel;
 import com.payby.pos.ecr.internal.processor.Processor;
 import com.uaepay.pos.ecr.Ecr;
 import com.uaepay.pos.ecr.acquire.Acquire;
@@ -30,7 +32,6 @@ public class GetOrderActivity extends BaseActivity {
     private EditText editTextOrderNo;
 
     private int type = -1;
-    Processor processor = new Processor();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,37 +51,6 @@ public class GetOrderActivity extends BaseActivity {
         editTextOrderNo = findViewById(R.id.edit_input_order_no);
         findViewById(R.id.btn_ok).setOnClickListener(this);
         findViewById(R.id.widget_scan_icon).setOnClickListener(this);
-
-      processor.setOnRefundGetOrderComplete(new Function1<Ecr.Response, Unit>() {
-        @Override
-        public Unit invoke(Ecr.Response response) {
-          runOnUiThread(
-              () -> {
-                String s =parserResponse(response);
-                String string = textReceive.getText().toString();
-                textReceive.setText(string + "\n" + s);
-                ResultActivity.Companion.start(GetOrderActivity.this,textReceive.getText().toString());
-
-              }
-          );
-          return null;
-        }
-      });
-      processor.setOnInquiryAcquireOrderComplete(new Function1<Ecr.Response, Unit>() {
-        @Override
-        public Unit invoke(Ecr.Response response) {
-          runOnUiThread(
-              () -> {
-                String s =parserResponse(response);
-                String string = textReceive.getText().toString();
-                textReceive.setText(string + "\n" + s);
-                ResultActivity.Companion.start(GetOrderActivity.this,textReceive.getText().toString());
-
-              }
-          );
-          return null;
-        }
-      });
 
     }
 
@@ -126,12 +96,7 @@ public class GetOrderActivity extends BaseActivity {
         Ecr.Request request = Ecr.Request.newBuilder().setMessageId(5).setTimestamp(timestamp).setServiceName(Processor.REFUND_GET_ORDER).setBody(body).build();
         Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.newBuilder().setVersion(1).setRequest(request).build();
         byte[] byteArray = envelope.toByteArray();
-        ConnectService.INSTANCE.send(byteArray, bytes -> {
-          runOnUiThread(WaitDialog::dismiss);
-          processor.messageHandle(bytes);
-
-          return null;
-        });
+        ConnectionKernel.getInstance().send(byteArray);
     }
 
     private void getAcquireOrder(String acquireOrderNo) {
@@ -141,12 +106,7 @@ public class GetOrderActivity extends BaseActivity {
         Ecr.Request request = Ecr.Request.newBuilder().setMessageId(4).setTimestamp(timestamp).setServiceName(Processor.ACQUIRE_GET_ORDER).setBody(body).build();
         Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.newBuilder().setVersion(1).setRequest(request).build();
         byte[] byteArray = envelope.toByteArray();
-      ConnectService.INSTANCE.send(byteArray, bytes -> {
-        runOnUiThread(WaitDialog::dismiss);
-        processor.messageHandle(bytes);
-
-        return null;
-      });
+        ConnectionKernel.getInstance().send(byteArray);
     }
 
 
@@ -174,6 +134,21 @@ public class GetOrderActivity extends BaseActivity {
                     });
                 }
             }
+        }
+    }
+
+    @Override
+    public void onReceiveMessage(byte[] bytes) {
+        super.onReceiveMessage(bytes);
+        runOnUiThread(WaitDialog::dismiss);
+        Log.e(App.TAG, "onReceiveMessage ---------------");
+        try {
+            Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
+            Ecr.Response response = envelope.getResponse();
+            String s = parserResponse(response);
+            showToast(s);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

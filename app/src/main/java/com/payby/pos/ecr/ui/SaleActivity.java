@@ -2,6 +2,7 @@ package com.payby.pos.ecr.ui;
 
 import android.os.Bundle;
 import android.util.ArraySet;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -13,8 +14,10 @@ import androidx.annotation.Nullable;
 import com.google.protobuf.Any;
 import com.google.protobuf.Timestamp;
 import com.kongzue.dialogx.dialogs.WaitDialog;
+import com.payby.pos.ecr.App;
 import com.payby.pos.ecr.R;
 import com.payby.pos.ecr.connect.ConnectService;
+import com.payby.pos.ecr.connect.ConnectionKernel;
 import com.payby.pos.ecr.internal.processor.Processor;
 import com.uaepay.pos.ecr.Ecr;
 import com.uaepay.pos.ecr.acquire.Acquire;
@@ -208,13 +211,14 @@ public class SaleActivity extends BaseActivity {
         Ecr.Request request = Ecr.Request.newBuilder().setMessageId(1).setTimestamp(timestamp).setServiceName(Processor.ACQUIRE_PLACE_ORDER).setBody(body).build();
         Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.newBuilder().setVersion(1).setRequest(request).build();
         byte[] byteArray = envelope.toByteArray();
-        ConnectService.INSTANCE.send(byteArray, bytes -> {
-            runOnUiThread(WaitDialog::dismiss);
-            processor.messageHandle(bytes);
-            parseEnvelopeRequest(bytes);
-
-            return null;
-        });
+//        ConnectService.INSTANCE.send(byteArray, bytes -> {
+//            runOnUiThread(WaitDialog::dismiss);
+//            processor.messageHandle(bytes);
+//            parseEnvelopeRequest(bytes);
+//
+//            return null;
+//        });
+        ConnectionKernel.getInstance().send(byteArray);
     }
 
     private void parseEnvelopeRequest(byte[] bytes) {
@@ -269,4 +273,18 @@ public class SaleActivity extends BaseActivity {
         return decimal.multiply(bigDecimal).longValue();
     }
 
+    @Override
+    public void onReceiveMessage(byte[] bytes) {
+        super.onReceiveMessage(bytes);
+        Log.e(App.TAG, "onReceiveMessage ---------------");
+        runOnUiThread(WaitDialog::dismiss);
+        try {
+            Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
+            Ecr.Response response = envelope.getResponse();
+            String s = parserResponse(response);
+            showToast(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

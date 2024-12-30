@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.protobuf' version '0.9.4'
 }
 
 android {
@@ -30,10 +31,8 @@ android {
         abortOnError false
     }
     buildFeatures {
+        aidl = true
         buildConfig = true
-    }
-    sourceSets {
-        main { jniLibs.srcDirs = ['libs'] }
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -42,10 +41,32 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+            aidl.srcDirs = ['src/main/aidl']
+            proto {
+                srcDir 'src/main/proto'
+            }
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
 
     api "no.nordicsemi.android:ble:2.9.0"
+    api "com.google.protobuf:protobuf-java-util:4.27.3"
+    // Protobuf Java 库
+    api 'com.google.protobuf:protobuf-java:3.24.0'  // 使用 javalite 版更轻量化
+}
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.24.0"
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins { java {} }
+        }
+    }
 }

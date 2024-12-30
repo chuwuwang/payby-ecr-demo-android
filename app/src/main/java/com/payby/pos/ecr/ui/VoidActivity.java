@@ -18,6 +18,7 @@ import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
 import com.kongzue.dialogx.dialogs.WaitDialog;
 import com.payby.pos.ecr.R;
 import com.payby.pos.ecr.bluetooth.ClassicBTManager;
+import com.payby.pos.ecr.connect.ConnectionKernel;
 import com.payby.pos.ecr.connect.ConnectionListener;
 import com.payby.pos.ecr.connect.ConnectService;
 import com.payby.pos.ecr.internal.processor.Processor;
@@ -116,11 +117,12 @@ public class VoidActivity extends BaseActivity {
         Ecr.Request request = Ecr.Request.newBuilder().setMessageId(2).setTimestamp(timestamp).setServiceName(Processor.VOID_PLACE_ORDER).setBody(body).build();
         Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.newBuilder().setVersion(1).setRequest(request).build();
         byte[] byteArray = envelope.toByteArray();
-      ConnectService.INSTANCE.send(byteArray, bytes -> {
-        runOnUiThread(WaitDialog::dismiss);
-        processor.messageHandle(bytes);
-        return null;
-      });
+//      ConnectService.INSTANCE.send(byteArray, bytes -> {
+//        runOnUiThread(WaitDialog::dismiss);
+//        processor.messageHandle(bytes);
+//        return null;
+//      });
+        ConnectionKernel.getInstance().send(byteArray);
     }
 
     private final ConnectionListener connectionListener = new ConnectionListener() {
@@ -172,6 +174,20 @@ public class VoidActivity extends BaseActivity {
                     });
                 }
             }
+        }
+    }
+
+    @Override
+    public void onReceiveMessage(byte[] bytes) {
+        super.onReceiveMessage(bytes);
+        runOnUiThread(WaitDialog::dismiss);
+        try {
+            Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
+            Ecr.Response response = envelope.getResponse();
+            String s = parserResponse(response);
+            showToast(s);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

@@ -16,8 +16,10 @@ import com.huawei.hms.hmsscankit.ScanUtil;
 import com.huawei.hms.ml.scan.HmsScan;
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
 import com.kongzue.dialogx.dialogs.WaitDialog;
+import com.payby.pos.ecr.App;
 import com.payby.pos.ecr.R;
 import com.payby.pos.ecr.connect.ConnectService;
+import com.payby.pos.ecr.connect.ConnectionKernel;
 import com.payby.pos.ecr.internal.processor.Processor;
 import com.uaepay.pos.ecr.Ecr;
 import com.uaepay.pos.ecr.acquire.Acquire;
@@ -39,25 +41,12 @@ public class RefundActivity extends BaseActivity {
     private EditText editTextOrderNo;
 
     private TextView textReceive;
-  Processor processor = new Processor();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_refund_layout);
         initView();
-      processor.setOnRefundPlaceOrderComplete(response -> {
-        String message = parserResponse(response);
-        runOnUiThread(
-            () -> {
-              String string = textReceive.getText().toString();
-              textReceive.setText(string + "\n" + message);
-              ResultActivity.Companion.start(RefundActivity.this,textReceive.getText().toString());
-
-            }
-        );
-        return null;
-      });
     }
 
     protected void initView() {
@@ -129,12 +118,7 @@ public class RefundActivity extends BaseActivity {
         Ecr.Request request = Ecr.Request.newBuilder().setMessageId(3).setTimestamp(timestamp).setServiceName(Processor.REFUND_PLACE_ORDER).setBody(body).build();
         Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.newBuilder().setVersion(1).setRequest(request).build();
         byte[] byteArray = envelope.toByteArray();
-
-      ConnectService.INSTANCE.send(byteArray, bytes -> {
-        runOnUiThread(WaitDialog::dismiss);
-        processor.messageHandle(bytes);
-        return null;
-      });
+        ConnectionKernel.getInstance().send(byteArray);
     }
 
 
@@ -177,6 +161,21 @@ public class RefundActivity extends BaseActivity {
                    });
                 }
             }
+        }
+    }
+
+    @Override
+    public void onReceiveMessage(byte[] bytes) {
+        super.onReceiveMessage(bytes);
+        runOnUiThread(WaitDialog::dismiss);
+        Log.e(App.TAG, "onReceiveMessage ---------------");
+        try {
+            Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
+            Ecr.Response response = envelope.getResponse();
+            String s = parserResponse(response);
+            showToast(s);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

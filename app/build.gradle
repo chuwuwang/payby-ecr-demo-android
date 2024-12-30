@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id 'com.google.protobuf' version '0.9.4'
 }
 
 android {
@@ -59,15 +58,7 @@ android {
     packaging {
         resources { excludes += '/META-INF/{AL2.0,LGPL2.1}' }
     }
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-            aidl.srcDirs = ['src/main/aidl']
-            proto {
-                srcDir 'src/main/proto'
-            }
-        }
-    }
+
 }
 
 static def compilerTime() {
@@ -87,28 +78,16 @@ dependencies {
     implementation libs.androidx.ui.tooling.preview
     implementation libs.androidx.material3
     implementation libs.androidx.appcompat
+    implementation project(':ecr')
 
-    implementation project(":library")
 
     implementation 'com.github.getActivity:Toaster:12.6'
     implementation "com.github.kongzue.DialogX:DialogX:0.0.49"
     implementation "com.guolindev.permissionx:permissionx:1.8.0"
 
-    implementation "com.google.protobuf:protobuf-java-util:4.27.3"
-    // Protobuf Java 库
-    implementation 'com.google.protobuf:protobuf-java:3.24.0'  // 使用 javalite 版更轻量化
+
     implementation "com.huawei.hms:scanplus:2.12.0.301"
     // 权限
     implementation 'com.github.getActivity:XXPermissions:13.6'
-}
 
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.24.0"
-    }
-    generateProtoTasks {
-        all().each { task ->
-            task.builtins { java {} }
-        }
-    }
 }

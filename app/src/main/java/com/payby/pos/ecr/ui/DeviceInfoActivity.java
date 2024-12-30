@@ -3,6 +3,7 @@ package com.payby.pos.ecr.ui;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -16,6 +17,7 @@ import com.payby.pos.ecr.utils.ThreadPoolManager;
 import com.uaepay.pos.ecr.Ecr;
 
 public class DeviceInfoActivity extends BaseActivity {
+    private TextView textReceive;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,6 +28,7 @@ public class DeviceInfoActivity extends BaseActivity {
 
     private void initView() {
         findViewById(R.id.getDeviceInfo).setOnClickListener(this);
+        textReceive = findViewById(R.id.widget_txt_receive);
     }
 
     @Override
@@ -60,6 +63,16 @@ public class DeviceInfoActivity extends BaseActivity {
     public void onReceiveMessage(byte[] bytes) {
         runOnUiThread(WaitDialog::dismiss);
         Log.e(App.TAG, "onReceiveMessage ---------------");
+        try {
+            Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
+            Ecr.Response response = envelope.getResponse();
+            if (response.getMessageId() == 4) {
+                String s = parserResponse(response);
+                showToast(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

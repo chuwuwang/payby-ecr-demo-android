@@ -4,6 +4,7 @@ import com.google.protobuf.Any
 import com.google.protobuf.Timestamp
 import com.kongzue.dialogx.dialogs.WaitDialog
 import com.payby.pos.ecr.connect.ConnectService.send
+import com.payby.pos.ecr.connect.ConnectionKernel
 import com.payby.pos.ecr.databinding.ActivitySettlementBinding
 import com.payby.pos.ecr.internal.processor.Processor
 import com.payby.pos.ecr.ui.ResultActivity.Companion.start
@@ -15,7 +16,6 @@ import com.uaepay.pos.ecr.acquire.Settlement
 class SettlementActivity : ViewBindingActivity<ActivitySettlementBinding>() {
 
 
-  var processor: Processor = Processor()
 
   override fun init() {
     binding.settlement.setOnClickListener {
@@ -26,13 +26,6 @@ class SettlementActivity : ViewBindingActivity<ActivitySettlementBinding>() {
       }
       startSettlement(operatorId)
 
-    }
-    processor.onSettlementClose = {
-      runOnUiThread {
-        binding.receive.text =
-          binding.receive.getText().toString() + "/" + parserResponse(it)
-        start(this, binding.receive.getText().toString())
-      }
     }
   }
 
@@ -46,10 +39,8 @@ class SettlementActivity : ViewBindingActivity<ActivitySettlementBinding>() {
       .build()
     val envelope = EcrEnvelope.newBuilder().setVersion(1).setRequest(request).build()
     val byteArray = envelope.toByteArray()
-    send(byteArray) { bytes: ByteArray ->
-      runOnUiThread { WaitDialog.dismiss() }
-      processor.messageHandle(bytes)
-    }
+    runOnUiThread { WaitDialog.dismiss() }
+    ConnectionKernel.getInstance().send(byteArray)
 
   }
 
