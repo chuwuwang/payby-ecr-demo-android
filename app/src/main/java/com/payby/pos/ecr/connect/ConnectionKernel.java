@@ -69,6 +69,9 @@ public class ConnectionKernel {
         }
     }
 
+    public ConnectType getConnectType() {
+        return connectType;
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -130,7 +133,7 @@ public class ConnectionKernel {
             BLEManager.getInstance().send(data);
         } else if (connectType == ConnectType.IN_APP) {
             ThreadPoolManager.executeCacheTask(() ->
-                    InAppManager.getInstance().send(data, inAppCallbackSend));
+                    InAppManager.getInstance().send(data, inAppCallback));
         }
     }
 
@@ -144,12 +147,12 @@ public class ConnectionKernel {
         }
         return false;
     }
-    private InAppCallback inAppCallbackSend = new InAppCallback.Stub() {
+    private InAppCallback inAppCallback = new InAppCallback.Stub() {
 
         @Override
         public void onReceive(byte[] bytes) throws RemoteException {
             Log.e(App.TAG, "onReceive:---Send " + bytes.length);
-            onReceived(bytes);
+            ConnectionKernel.getInstance().onReceived(bytes);
         }
 
     };

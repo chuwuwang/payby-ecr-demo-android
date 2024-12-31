@@ -13,9 +13,11 @@ import androidx.annotation.Nullable;
 
 import com.google.protobuf.Any;
 import com.google.protobuf.Timestamp;
+import com.hjq.toast.Toaster;
 import com.kongzue.dialogx.dialogs.WaitDialog;
 import com.payby.pos.ecr.App;
 import com.payby.pos.ecr.R;
+import com.payby.pos.ecr.connect.ConnectType;
 import com.payby.pos.ecr.connect.ConnectionKernel;
 import com.payby.pos.ecr.internal.processor.Processor;
 import com.uaepay.pos.ecr.Ecr;
@@ -78,6 +80,9 @@ public class SaleActivity extends BaseActivity {
         rbCustomCode = (CheckBox) findViewById(R.id.rb_custom_code);
         rbScanCode = (CheckBox) findViewById(R.id.rb_scan_code);
         displayResultPage = (CheckBox) findViewById(R.id.display_result_page);
+        if (ConnectionKernel.getInstance().getConnectType() == ConnectType.IN_APP) {
+            displayResultPage.setChecked(true);
+        }
     }
 
     @Override
@@ -235,7 +240,9 @@ public class SaleActivity extends BaseActivity {
             Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
             Ecr.Response response = envelope.getResponse();
             String s = parserResponse(response);
-            showToast(s);
+            runOnUiThread(
+                    () -> textReceive.setText(s)
+            );
         } catch (Exception e) {
             e.printStackTrace();
         }

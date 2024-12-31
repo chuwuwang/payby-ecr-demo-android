@@ -66,10 +66,9 @@ public class DeviceInfoActivity extends BaseActivity {
         try {
             Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
             Ecr.Response response = envelope.getResponse();
-            if (response.getMessageId() == 4) {
-                String s = parserResponse(response);
-                showToast(s);
-            }
+            String s = parserResponse(response);
+            runOnUiThread(() ->textReceive.setText(s));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
