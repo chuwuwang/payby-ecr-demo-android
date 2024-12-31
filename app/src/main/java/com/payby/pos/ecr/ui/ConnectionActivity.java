@@ -2,6 +2,8 @@ package com.payby.pos.ecr.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,9 +14,11 @@ import androidx.annotation.Nullable;
 import com.kongzue.dialogx.dialogs.WaitDialog;
 import com.payby.pos.ecr.App;
 import com.payby.pos.ecr.R;
-import com.payby.pos.ecr.connect.ConnectService;
 import com.payby.pos.ecr.connect.ConnectType;
 import com.payby.pos.ecr.connect.ConnectionKernel;
+import com.payby.pos.ecr.connect.ConnectionListener;
+import com.payby.pos.ecr.inapp.InAppManager;
+import com.payby.pos.ecr.internal.InAppCallback;
 import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.RequestCallback;
 
@@ -39,25 +43,6 @@ public class ConnectionActivity extends BaseActivity {
         findViewById(R.id.bleConnectBtn).setOnClickListener(this);
         findViewById(R.id.inAppConnectBtn).setOnClickListener(this);
         findViewById(R.id.classicBTConnectBtn).setOnClickListener(this);
-
-        Button  inAppConnectBtn = (Button) findViewById(R.id.inAppConnectBtn);
-        inAppConnectBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ConnectService.INSTANCE.setConnectCallback((it) -> {
-                    if (it) {
-                        runOnUiThread(WaitDialog::dismiss);
-
-                        Intent intent = new Intent(ConnectionActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                    return null;
-                });
-                ConnectService.INSTANCE.connect(ConnectionActivity.this, ConnectType.IN_APP);
-
-            }
-        });
     }
 
     @Override
@@ -67,6 +52,8 @@ public class ConnectionActivity extends BaseActivity {
             ConnectionKernel.getInstance().connectWithClassicBT(this);
         } else if (id == R.id.bleConnectBtn) {
             ConnectionKernel.getInstance().connectWithBLE(this);
+        } else if (id == R.id.inAppConnectBtn) {
+            ConnectionKernel.getInstance().connectWithInApp(this);
         }
     }
 

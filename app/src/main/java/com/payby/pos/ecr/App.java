@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.hjq.toast.Toaster;
-import com.payby.pos.ecr.inapp.InAppServiceBinder;
 import com.payby.pos.ecr.utils.ActivityManager;
 
 public class App extends Application {

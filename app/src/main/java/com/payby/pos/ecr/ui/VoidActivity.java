@@ -20,7 +20,6 @@ import com.payby.pos.ecr.R;
 import com.payby.pos.ecr.bluetooth.ClassicBTManager;
 import com.payby.pos.ecr.connect.ConnectionKernel;
 import com.payby.pos.ecr.connect.ConnectionListener;
-import com.payby.pos.ecr.connect.ConnectService;
 import com.payby.pos.ecr.internal.processor.Processor;
 import com.uaepay.pos.ecr.Ecr;
 import com.uaepay.pos.ecr.acquire.Acquire;
@@ -38,29 +37,12 @@ public class VoidActivity extends BaseActivity {
     private CheckBox ckCustomer;
     private TextView textReceive;
     private EditText editTextOrderNo;
-  Processor processor = new Processor();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_void_layout);
         initView();
-      processor.setOnVoidPlaceOrderComplete(new Function1<Ecr.Response, Unit>() {
-        @Override
-        public Unit invoke(Ecr.Response response) {
-          String message = parserResponse(response);
-          runOnUiThread(
-              () -> {
-                String string = textReceive.getText().toString();
-                textReceive.setText(string + "\n" + message);
-                ResultActivity.start(VoidActivity.this,string + "\n" + message);
-
-              }
-          );
-          return null;
-        }
-      });
-
     }
 
     private void initView() {

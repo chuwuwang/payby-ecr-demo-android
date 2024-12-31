@@ -16,7 +16,6 @@ import com.google.protobuf.Timestamp;
 import com.kongzue.dialogx.dialogs.WaitDialog;
 import com.payby.pos.ecr.App;
 import com.payby.pos.ecr.R;
-import com.payby.pos.ecr.connect.ConnectService;
 import com.payby.pos.ecr.connect.ConnectionKernel;
 import com.payby.pos.ecr.internal.processor.Processor;
 import com.uaepay.pos.ecr.Ecr;
@@ -52,7 +51,6 @@ public class SaleActivity extends BaseActivity {
     private CheckBox rbBankCard;
     private CheckBox rbCustomCode;
     private CheckBox rbScanCode;
-    Processor processor = new Processor();
     private CheckBox displayResultPage;
 
 
@@ -61,39 +59,6 @@ public class SaleActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sale_layout);
         initView();
-        processor.setOnPlaceAcquireOrderComplete(new Function1<Ecr.Response, Unit>() {
-            @Override
-            public Unit invoke(Ecr.Response response) {
-                String message = parserResponse(response);
-                runOnUiThread(
-                        () -> {
-                            String string = textReceive.getText().toString();
-                            textReceive.setText(string + "\n" + message);
-                            ResultActivity.start(SaleActivity.this, textReceive.getText().toString());
-
-                        }
-                );
-                return null;
-            }
-        });
-
-        processor.setOnAcquireNotification(new Function1<Ecr.Response, Unit>() {
-            @Override
-            public Unit invoke(Ecr.Response response) {
-                String message = parserResponse(response);
-
-                runOnUiThread(
-                        () -> {
-                            String string = textReceive.getText().toString();
-                            textReceive.setText(string + "\n" + message);
-                            ResultActivity.start(SaleActivity.this, textReceive.getText().toString());
-
-                        }
-                );
-                return null;
-            }
-        });
-
 
     }
 
@@ -242,12 +207,7 @@ public class SaleActivity extends BaseActivity {
                 .build();
         Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.newBuilder().setVersion(1).setResponse(response).build();
         byte[] byteArray = envelope.toByteArray();
-
-        ConnectService.INSTANCE.send(byteArray, bytes -> {
-            runOnUiThread(WaitDialog::dismiss);
-            processor.messageHandle(bytes);
-            return null;
-        });
+        ConnectionKernel.getInstance().send(byteArray);
     }
 
 
