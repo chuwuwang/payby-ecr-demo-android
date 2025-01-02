@@ -83,7 +83,7 @@ public class SettlementActivity extends BaseActivity {
             Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
             Ecr.Response response = envelope.getResponse();
             String s = parserResponse(response);
-            textReceive.setText(s);
+            runOnUiThread(() -> textReceive.setText(s));
         } catch (Exception e) {
             e.printStackTrace();
         }

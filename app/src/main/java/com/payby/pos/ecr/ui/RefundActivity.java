@@ -171,7 +171,12 @@ public class RefundActivity extends BaseActivity {
             Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
             Ecr.Response response = envelope.getResponse();
             String s = parserResponse(response);
-            showToast(s);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    textReceive.setText(s);
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
