@@ -1,6 +1,8 @@
 package com.payby.pos.ecr.ui;
 
+import android.Manifest;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -76,6 +78,12 @@ public class ConnectionActivity extends BaseActivity {
     }
 
     private void requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PermissionX
+                    .init(this)
+                    .permissions(Manifest.permission.BLUETOOTH_CONNECT)
+                    .request(requestCallback);
+        }
         PermissionX.init(this)
             .permissions(
                     android.Manifest.permission.BLUETOOTH,
