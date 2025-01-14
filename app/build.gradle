@@ -10,8 +10,8 @@ android {
         applicationId "com.payby.pos.ecr.demo"
         minSdk 24
         targetSdk 34
-        versionCode 6
-        versionName "1.6"
+        versionCode 7
+        versionName "1.7"
         vectorDrawables { useSupportLibrary true }
     }
     signingConfigs {
