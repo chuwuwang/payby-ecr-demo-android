@@ -91,7 +91,7 @@ public class ReceiptsActivity extends BaseActivity {
     }
 
     private void doReceipt() {
-        String orderNo = editTextOrderNo.getText().toString();
+       /* String orderNo = editTextOrderNo.getText().toString();
         if (orderNo == null || orderNo.length() == 0) {
             showToast("Please input order no");
             return;
@@ -149,7 +149,7 @@ public class ReceiptsActivity extends BaseActivity {
         Ecr.Request request = Ecr.Request.newBuilder().setMessageId(5).setTimestamp(timestamp).setServiceName(serviceName).setBody(body).build();
         Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.newBuilder().setVersion(1).setRequest(request).build();
         byte[] byteArray = envelope.toByteArray();
-        ConnectionKernel.getInstance().send(byteArray);
+        ConnectionKernel.getInstance().send(byteArray);*/
     }
 
     private int REQUEST_CODE_SCAN_ONE = 0x0101;

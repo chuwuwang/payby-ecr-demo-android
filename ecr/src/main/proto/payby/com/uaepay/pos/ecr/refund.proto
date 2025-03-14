@@ -7,8 +7,10 @@ import "payby/com/uaepay/pos/ecr/acquire.proto";
 
 message RefundRequest {
   common.Money refundAmount = 1;
-  string acquireOrderNo = 2;
+  optional string acquireOrderNo = 2;
   repeated Receipt printReceipts = 3;
+  optional string refundMerchantOrderNo = 4;
+  optional string acquireMerchantOrderNo = 5;
 }
 
 message RefundOrder {
@@ -16,5 +18,7 @@ message RefundOrder {
   string acquireOrderNo = 2;
   common.Money refundAmount = 3;
   string status = 4;
+  optional string refundMerchantOrderNo = 5;
+  optional string acquireMerchantOrderNo = 6;
 }
 

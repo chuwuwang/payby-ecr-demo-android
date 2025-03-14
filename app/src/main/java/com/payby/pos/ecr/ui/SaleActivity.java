@@ -1,6 +1,8 @@
 package com.payby.pos.ecr.ui;
 
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.ArraySet;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +40,7 @@ import kotlin.jvm.functions.Function1;
 public class SaleActivity extends BaseActivity {
 
     private EditText editTextAmount;
+    private EditText editTextMerchantNo;
     private EditText editTextSubject;
     private EditText editTextReserved;
     private CheckBox ckMerchant;
@@ -66,6 +69,7 @@ public class SaleActivity extends BaseActivity {
 
     private void initView() {
         editTextAmount = findViewById(R.id.edit_input_money);
+        editTextMerchantNo = findViewById(R.id.edit_input_merchant_order_no);
         editTextSubject = findViewById(R.id.edit_input_subject);
         editTextReserved = findViewById(R.id.edit_input_reserved);
 
@@ -83,6 +87,15 @@ public class SaleActivity extends BaseActivity {
         if (ConnectionKernel.getInstance().getConnectType() == ConnectType.IN_APP) {
             displayResultPage.setChecked(true);
         }
+
+        InputFilter inputFilter = (source, start, end, dest, dstart, dend) -> {
+            String input = source.toString();
+            if (input.isEmpty() || input.matches("[A-Za-z0-9]*")) {
+                return null; // 接受输入
+            }
+            return "";
+        };
+        editTextMerchantNo.setFilters(new InputFilter[]{inputFilter});
     }
 
     @Override
@@ -166,6 +179,7 @@ public class SaleActivity extends BaseActivity {
 
         Acquire.PlaceOrderRequest placeOrderRequest = Acquire.PlaceOrderRequest.newBuilder()
                 .setAmount(money)
+                .setMerchantOrderNo(editTextMerchantNo.getText().toString())
                 .setReserved(editTextReserved.getText().toString())
                 .setSubject(subject)
                 .setCashierParams(cashierParams)

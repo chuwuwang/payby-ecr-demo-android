@@ -6,7 +6,9 @@ import "payby/com/uaepay/pos/ecr/common.proto";
 import "payby/com/uaepay/pos/ecr/acquire.proto";
 
 message VoidRequest {
-  string acquireOrderNo = 1;
+  optional string acquireOrderNo = 1;
   repeated Receipt printReceipts = 2;
+  optional string acquireMerchantOrderNo = 3;
+  optional string voidMerchantOrderNo = 4;
 }
 

@@ -32,7 +32,27 @@
                 android:src="@drawable/widget_scan_icon"/>
         </LinearLayout>
 
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+            <EditText
+                android:id="@+id/edit_input_original_merchant_order_no_void"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="Input Void Merchant Order No"
+                android:inputType="number"
+                android:textColor="#000000"
+                android:textColorHint="#ff6900"
+                android:textSize="16sp" />
+            <ImageView
+                android:id="@+id/widget_scan_icon_original_void"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/widget_scan_icon"/>
+        </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

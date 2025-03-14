@@ -13,12 +13,9 @@ message AcquireReceipt {
 }
 
 message ReceiptsRequest {
-  string orderNo = 1;
+  optional string orderNo = 1;
   repeated Receipt receipts = 2;
+  optional string merchantOrderNo = 3;
 }
 
-message ReceiptRequest {
-  string orderNo = 1;
-  Receipt receipt = 2;
-}
 

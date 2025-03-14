@@ -19,7 +19,14 @@
             android:textColor="#000000"
             android:textColorHint="#ff6900"
             android:textSize="14sp" />
-
+        <EditText
+            android:id="@+id/edit_input_merchant_order_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Input Merchant Order No [A-Za-z0-9]*"
+            android:textColor="#000000"
+            android:textColorHint="#ff6900"
+            android:textSize="14sp" />
         <EditText
             android:id="@+id/edit_input_subject"
             android:layout_width="match_parent"

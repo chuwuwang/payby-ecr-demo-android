@@ -12,6 +12,7 @@ message PlaceOrderRequest {
   optional string reserved = 3;
   InvokeParams invokeParams = 4;
   optional CashierParams cashierParams = 5;
+  optional string merchantOrderNo = 6;
 }
 
 message InvokeParams{
@@ -53,7 +54,8 @@ enum PaymentMethod{
 }
 
 message OrderNoWrapper {
-  string orderNo = 1;
+  optional string orderNo = 1;
+  optional string merchantOrderNo = 2;
 }
 
 message AcquireOrder {
@@ -66,6 +68,7 @@ message AcquireOrder {
   optional string failMessage = 7;
   optional string receiptNo = 8;
   optional PaymentOrder paymentOrder = 9;
+  optional string merchantOrderNo = 10;
 }
 
 enum AcquireOrderStatus {
@@ -103,6 +106,7 @@ message BankcardPaymentInfo {
   optional string responseDescription = 10;
   optional bool isSignature = 11;
   optional EmvData emvData = 12;
+  optional string issuerBank = 13;
 }
 
 enum ReadType {

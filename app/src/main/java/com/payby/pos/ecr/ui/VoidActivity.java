@@ -2,6 +2,7 @@ package com.payby.pos.ecr.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -37,6 +38,8 @@ public class VoidActivity extends BaseActivity {
     private CheckBox ckCustomer;
     private TextView textReceive;
     private EditText editTextOrderNo;
+    private EditText editTextMerchantID;
+    private int scanType = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,9 +53,17 @@ public class VoidActivity extends BaseActivity {
         ckMerchant = findViewById(R.id.widget_merchant);
         textReceive = findViewById(R.id.widget_txt_receive);
         editTextOrderNo = findViewById(R.id.edit_input_order_no);
+        editTextMerchantID = findViewById(R.id.edit_input_original_merchant_order_no_void);
         findViewById(R.id.btn_ok).setOnClickListener(this);
         findViewById(R.id.widget_scan_icon).setOnClickListener(this);
-
+        InputFilter inputFilter = (source, start, end, dest, dstart, dend) -> {
+            String input = source.toString();
+            if (input.isEmpty() || input.matches("[A-Za-z0-9]*")) {
+                return null; // 接受输入
+            }
+            return "";
+        };
+        editTextMerchantID.setFilters(new InputFilter[]{inputFilter});
     }
 
     @Override
@@ -67,6 +78,10 @@ public class VoidActivity extends BaseActivity {
         if (view.getId() == R.id.btn_ok) {
             doVoid();
         } else if (view.getId() == R.id.widget_scan_icon) {
+            scanType =1;
+            doScan();
+        } else if (view.getId() == R.id.widget_scan_icon_original_void) {
+            scanType = 2;
             doScan();
         }
     }
@@ -80,7 +95,7 @@ public class VoidActivity extends BaseActivity {
             showToast("Please input order no");
             return;
         }
-
+        String merchantOrderNo = editTextMerchantID.getText().toString();
         WaitDialog.show("Loading...");
         textReceive.setText("Receive:\n");
 
@@ -93,7 +108,10 @@ public class VoidActivity extends BaseActivity {
         if (checked) {
             list.add(Acquire.Receipt.CUSTOMER_RECEIPT);
         }
-        Void.VoidRequest voidRequest = Void.VoidRequest.newBuilder().setAcquireOrderNo(acquireOrderNo).addAllPrintReceipts(list).build();
+        Void.VoidRequest voidRequest = Void.VoidRequest.newBuilder()
+                .setAcquireOrderNo(acquireOrderNo)
+                .setVoidMerchantOrderNo(merchantOrderNo)
+                .addAllPrintReceipts(list).build();
         Any body = Any.pack(voidRequest);
         Timestamp timestamp = Timestamp.newBuilder().setSeconds(System.currentTimeMillis() / 1000).build();
         Ecr.Request request = Ecr.Request.newBuilder().setMessageId(2).setTimestamp(timestamp).setServiceName(Processor.VOID_PLACE_ORDER).setBody(body).build();
@@ -144,8 +162,14 @@ public class VoidActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            EditText editText =  findViewById(R.id.edit_input_order_no);
-                            editText.setText(scan.originalValue.toString());
+                            if (scanType == 1) {
+                                EditText editText =  findViewById(R.id.edit_input_order_no);
+                                editText.setText(scan.originalValue.toString());
+                            } else if (scanType ==2) {
+                                EditText editText =  findViewById(R.id.edit_input_original_merchant_order_no_void);
+                                editText.setText(scan.originalValue.toString());
+                            }
+
                         }
                     });
                 }

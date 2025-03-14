@@ -2,6 +2,7 @@ package com.payby.pos.ecr.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -38,8 +39,10 @@ public class RefundActivity extends BaseActivity {
     private CheckBox ckCustomer;
     private EditText editTextAmount;
     private EditText editTextOrderNo;
+    private EditText editTextMerchantID;
 
     private TextView textReceive;
+    private int scanType = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +59,15 @@ public class RefundActivity extends BaseActivity {
         editTextOrderNo = findViewById(R.id.edit_input_order_no);
         findViewById(R.id.btn_ok).setOnClickListener(this);
         findViewById(R.id.widget_scan_icon).setOnClickListener(this);
+        editTextMerchantID = findViewById(R.id.edit_input_original_merchant_order_no_refund);
+        InputFilter inputFilter = (source, start, end, dest, dstart, dend) -> {
+            String input = source.toString();
+            if (input.isEmpty() || input.matches("[A-Za-z0-9]*")) {
+                return null; // 接受输入
+            }
+            return "";
+        };
+        editTextMerchantID.setFilters(new InputFilter[]{inputFilter});
     }
 
     @Override
@@ -69,6 +81,10 @@ public class RefundActivity extends BaseActivity {
         if (view.getId() == R.id.btn_ok) {
             doRefund();
         } else if (view.getId() == R.id.widget_scan_icon) {
+            scanType = 1;
+            doScan();
+        } else if (view.getId() == R.id.widget_scan_icon_original_refund) {
+            scanType = 2;
             doScan();
         }
     }
@@ -91,6 +107,7 @@ public class RefundActivity extends BaseActivity {
             return;
         }
 
+        String merchantOrderNo = editTextMerchantID.getText().toString();
         WaitDialog.show("Loading...");
         textReceive.setText("Receive:\n");
 
@@ -110,6 +127,7 @@ public class RefundActivity extends BaseActivity {
         Refund.RefundRequest refundRequest = Refund.RefundRequest.newBuilder()
                 .setRefundAmount(money)
                 .setAcquireOrderNo(acquireOrderNo)
+                .setRefundMerchantOrderNo(merchantOrderNo)
                 .addAllPrintReceipts(list)
                 .build();
         Any body = Any.pack(refundRequest);
@@ -153,8 +171,14 @@ public class RefundActivity extends BaseActivity {
                    runOnUiThread(new Runnable() {
                        @Override
                        public void run() {
-                          EditText editText =  findViewById(R.id.edit_input_order_no);
-                          editText.setText(scan.originalValue.toString());
+                           if (scanType == 1) {
+                               EditText editText =  findViewById(R.id.edit_input_order_no);
+                               editText.setText(scan.originalValue.toString());
+                           } else if (scanType == 2){
+                                 // scanType == 2
+                                 EditText editText =  findViewById(R.id.edit_input_original_merchant_order_no_refund);
+                                 editText.setText(scan.originalValue.toString());
+                           }
                        }
                    });
                 }
