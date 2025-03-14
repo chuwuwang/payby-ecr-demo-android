@@ -91,27 +91,26 @@ public class ReceiptsActivity extends BaseActivity {
     }
 
     private void doReceipt() {
-       /* String orderNo = editTextOrderNo.getText().toString();
+        String orderNo = editTextOrderNo.getText().toString();
         if (orderNo == null || orderNo.length() == 0) {
             showToast("Please input order no");
             return;
         }
         Any body = null;
         String serviceName = "";
-        Receipt.ReceiptRequest receiptRequest;
-      Receipt.ReceiptsRequest receiptsRequest;
+        Receipt.ReceiptsRequest receiptsRequest;
         boolean customerChecked = ckCustomer.isChecked();
         boolean merchantChecked = ckMerchant.isChecked();
         if (type == 0) {
             serviceName = Processor.ACQUIRE_GET_ORDER_RECEIPT;
             if (merchantChecked) {
-                receiptRequest = Receipt.ReceiptRequest.newBuilder().setOrderNo(orderNo).setReceipt(Acquire.Receipt.MERCHANT_RECEIPT).build();
+                receiptsRequest = Receipt.ReceiptsRequest.newBuilder().setOrderNo(orderNo).setReceipts(0, Acquire.Receipt.MERCHANT_RECEIPT).build();
             } else if (customerChecked) {
-                receiptRequest = Receipt.ReceiptRequest.newBuilder().setOrderNo(orderNo).setReceipt(Acquire.Receipt.CUSTOMER_RECEIPT).build();
+                receiptsRequest = Receipt.ReceiptsRequest.newBuilder().setOrderNo(orderNo).setReceipts(1,Acquire.Receipt.CUSTOMER_RECEIPT).build();
             } else {
-                receiptRequest = Receipt.ReceiptRequest.newBuilder().setOrderNo(orderNo).build();
+                receiptsRequest = Receipt.ReceiptsRequest.newBuilder().setOrderNo(orderNo).build();
             }
-            body = Any.pack(receiptRequest);
+            body = Any.pack(receiptsRequest);
         } else if (type == 1) {
             serviceName = Processor.ACQUIRE_PRINT_RECEIPTS ;
             List<Acquire.Receipt> list = new ArrayList<>();
@@ -126,13 +125,13 @@ public class ReceiptsActivity extends BaseActivity {
         } else if (type == 2) {
             serviceName = "/acquire/refund/receipt/get";
             if (merchantChecked) {
-                receiptRequest = Receipt.ReceiptRequest.newBuilder().setOrderNo(orderNo).setReceipt(Acquire.Receipt.MERCHANT_RECEIPT).build();
+                receiptsRequest = Receipt.ReceiptsRequest.newBuilder().setOrderNo(orderNo).setReceipts(0,Acquire.Receipt.MERCHANT_RECEIPT).build();
             } else if (customerChecked) {
-                receiptRequest = Receipt.ReceiptRequest.newBuilder().setOrderNo(orderNo).setReceipt(Acquire.Receipt.CUSTOMER_RECEIPT).build();
+                receiptsRequest = Receipt.ReceiptsRequest.newBuilder().setOrderNo(orderNo).setReceipts(1,Acquire.Receipt.CUSTOMER_RECEIPT).build();
             } else {
-                receiptRequest = Receipt.ReceiptRequest.newBuilder().setOrderNo(orderNo).build();
+                receiptsRequest = Receipt.ReceiptsRequest.newBuilder().setOrderNo(orderNo).build();
             }
-            body = Any.pack(receiptRequest);
+            body = Any.pack(receiptsRequest);
         } else if (type == 3) {
             serviceName = Processor.REFUND_PRINT_RECEIPTS ;
             List<Acquire.Receipt> list = new ArrayList<>();
@@ -149,7 +148,7 @@ public class ReceiptsActivity extends BaseActivity {
         Ecr.Request request = Ecr.Request.newBuilder().setMessageId(5).setTimestamp(timestamp).setServiceName(serviceName).setBody(body).build();
         Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.newBuilder().setVersion(1).setRequest(request).build();
         byte[] byteArray = envelope.toByteArray();
-        ConnectionKernel.getInstance().send(byteArray);*/
+        ConnectionKernel.getInstance().send(byteArray);
     }
 
     private int REQUEST_CODE_SCAN_ONE = 0x0101;
