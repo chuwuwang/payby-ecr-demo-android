@@ -10,21 +10,26 @@ android {
         applicationId "com.payby.pos.ecr.demo"
         minSdk 24
         targetSdk 34
-        versionCode 7
-        versionName "1.7"
+        versionCode 13
+        versionName "1.13"
         vectorDrawables { useSupportLibrary true }
     }
     signingConfigs {
         live {
-            keyAlias 'bankpos'
-            keyPassword 'benxerbank'
-            storePassword 'benxerbank'
-            storeFile file('./pos.keystore')
+            keyAlias 'paybykey01'
+            keyPassword 'payby666'
+            storePassword 'payby666'
+            storeFile file('./paybykey01.keystore')
             v1SigningEnabled true
             v2SigningEnabled true
         }
     }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.live
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
             signingConfig signingConfigs.live
             minifyEnabled false
@@ -89,5 +94,5 @@ dependencies {
     implementation "com.huawei.hms:scanplus:2.12.0.301"
     // 权限
     implementation 'com.github.getActivity:XXPermissions:13.6'
-
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
 }

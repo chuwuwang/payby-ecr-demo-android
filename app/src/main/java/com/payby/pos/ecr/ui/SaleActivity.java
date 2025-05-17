@@ -96,6 +96,8 @@ public class SaleActivity extends BaseActivity {
             return "";
         };
         editTextMerchantNo.setFilters(new InputFilter[]{inputFilter});
+
+        findViewById(R.id.widget_close_cashier).setOnClickListener(this);
     }
 
     @Override
@@ -108,6 +110,8 @@ public class SaleActivity extends BaseActivity {
         super.onClick(view);
         if (view.getId() == R.id.btn_ok) {
             packSale();
+        } else if (view.getId() == R.id.widget_close_cashier) {
+            closeCashier();
         }
     }
 
@@ -149,7 +153,7 @@ public class SaleActivity extends BaseActivity {
             notificationType = -1;
         }
 
-        WaitDialog.show("Loading...");
+        WaitDialog.show("Loading...").setCancelable(true);
         textReceive.setText("Receive:\n");
 
         Long amountValue = Long.valueOf(amount);
@@ -251,14 +255,31 @@ public class SaleActivity extends BaseActivity {
         Log.e(App.TAG, "onReceiveMessage ---------------");
         runOnUiThread(WaitDialog::dismiss);
         try {
-            Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
-            Ecr.Response response = envelope.getResponse();
-            String s = parserResponse(response);
+//            Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
+//            Ecr.Response response = envelope.getResponse();
+            String s = parser(bytes);
             runOnUiThread(
                     () -> textReceive.setText(s)
             );
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void closeCashier() {
+        Timestamp timestamp = Timestamp.newBuilder()
+                .setSeconds(System.currentTimeMillis() / 1000)
+                .build();
+        Ecr.Request request = Ecr.Request.newBuilder()
+                .setMessageId(4)
+                .setTimestamp(timestamp)
+                .setServiceName(Processor.CLOSE_CASHIER)
+                .build();
+        Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.newBuilder()
+                .setVersion(1)
+                .setRequest(request)
+                .build();
+        byte[] byteArray = envelope.toByteArray();
+        ConnectionKernel.getInstance().send(byteArray);
     }
 }

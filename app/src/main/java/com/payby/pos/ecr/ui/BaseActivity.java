@@ -1,5 +1,6 @@
 package com.payby.pos.ecr.ui;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -125,7 +126,10 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         builder.append("responseCode: ").append(responseCode).append("\n");
         builder.append("subResponseCode: ").append(subResponseCode).append("\n");
         builder.append("errorMessage: ").append(errorMessage).append("\n");
-
+        // 先处理responseCode
+        if (responseCode != null && responseCode!="SUCCESS") {
+//            return builder.toString();
+        }
         switch (serviceName) {
             case Processor.ACQUIRE_PLACE_ORDER: // purchase
                 MessageOrBuilder message = body.unpack(Acquire.AcquireOrder.class);
@@ -158,6 +162,10 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case Processor.DEVICE_GET_THIS: //
                 message = body.unpack(Device.DeviceInfo.class);
+                bodyString = JsonFormat.printer().print(message);
+                break;
+            case Processor.ACQUIRE_GET_ORDER_LIST:
+                message = body.unpack(Acquire.AcquireOrderPage.class);
                 bodyString = JsonFormat.printer().print(message);
                 break;
         }

@@ -218,7 +218,14 @@
             android:layout_marginTop="8dp"
             android:text="Done"
             android:textAllCaps="false" />
-
+        <Button
+            android:id="@+id/widget_close_cashier"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="Close Cashier"
+            android:textAllCaps="false"
+            android:textSize="16sp" />
         <TextView
             android:id="@+id/widget_txt_receive"
             android:layout_width="match_parent"

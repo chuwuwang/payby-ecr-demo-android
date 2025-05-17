@@ -17,6 +17,8 @@ public class Processor {
     public static final String SETTLEMENT_CLOSE = "/settlement/closeBatch";
     public static final String DEVICE_GET_THIS = "/device/getThis";
 
+    public static final String CLOSE_CASHIER = "/cashier/close";
+
     public static final String STATUS_FAILED = "FAILED";
     public static final String STATUS_SUCCESS = "SUCCESS";
 }

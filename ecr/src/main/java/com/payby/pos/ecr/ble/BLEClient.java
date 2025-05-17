@@ -9,6 +9,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 import no.nordicsemi.android.ble.BleManager;
@@ -29,6 +30,7 @@ public class BLEClient extends BleManager {
     private BluetoothGattCharacteristic characteristic;
 
     private BLEClientListener listener;
+    private BluetoothGatt bluetoothGatt;
 
     public void setListener(BLEClientListener listener) {
         this.listener = listener;
@@ -70,23 +72,21 @@ public class BLEClient extends BleManager {
      * @param bytes
      */
     public void send(byte[] bytes) {
+        boolean connected = isDeviceConnected();
+        if (connected == false) {
+            onDisconnected();
+            return;
+        }
         try {
-            boolean connected = isDeviceConnected();
-            if (connected) {
-                logging(bytes, "<--- BLE Client send");
-                final SuccessCallback successCallback = device -> Log.e(TAG, "<--- BLE Client send success");
-                final FailCallback failCallback = (device, status) -> Log.e(TAG, "<--- BLE Client send failure: " + status);
-                PacketSplitter splitter = new PacketSplitter();
-                writeCharacteristic(characteristic, bytes, BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE)
-                        .split(splitter)
-                        .fail(failCallback)
-                        .done(successCallback)
-                        .enqueue();
-            } else {
-                if (listener != null) {
-                    listener.onDisconnected();
-                }
-            }
+            logging(bytes, "<--- BLE Client send");
+            final SuccessCallback successCallback = device -> Log.e(TAG, "<--- BLE Client send success");
+            final FailCallback failCallback = (device, status) -> Log.e(TAG, "<--- BLE Client send failure: " + status);
+            PacketSplitter splitter = new PacketSplitter();
+            writeCharacteristic(characteristic, bytes, BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE)
+                    .split(splitter)
+                    .fail(failCallback)
+                    .done(successCallback)
+                    .enqueue();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -99,8 +99,8 @@ public class BLEClient extends BleManager {
         return ready;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     protected boolean isRequiredServiceSupported(@NonNull BluetoothGatt gatt) {
@@ -109,6 +109,8 @@ public class BLEClient extends BleManager {
         if (service != null) {
             characteristic = service.getCharacteristic(CHARACTERISTIC_UUID);
         }
+        bluetoothGatt = gatt;
+        refreshDeviceCache(gatt);
         return characteristic != null;
     }
 
@@ -152,17 +154,45 @@ public class BLEClient extends BleManager {
 
     @Override
     public void log(int priority, @NonNull String message) {
-        Log.e(TAG, "BLE Client log --> " + message);
+        Log.e(TAG, "BLE Client log --> " + message + " priority: " + priority);
+        String gttError = "Error: (0x85): GATT ERROR";
+        boolean bool = priority == 5 && message.contains(gttError);
+        if (bool) {
+            onDisconnected();
+        }
     }
 
     @Override
     protected void onServicesInvalidated() {
         Log.e(TAG, "BLE Client onServicesInvalidated");
+        onDisconnected();
+    }
+
+    private void onDisconnected() {
+        deviceDisconnect();
+        connecting = false;
         characteristic = null;
         if (listener != null) {
             listener.onDisconnected();
         }
-        connecting = false;
+        try {
+            if (bluetoothGatt != null) {
+                bluetoothGatt.disconnect();
+                bluetoothGatt.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        bluetoothGatt = null;
+    }
+
+    private void refreshDeviceCache(BluetoothGatt gatt) {
+        try {
+            Method method = gatt.getClass().getMethod("refresh");
+            method.invoke(gatt);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String getDeviceInfo(BluetoothDevice device) {

@@ -59,6 +59,7 @@ public class RefundActivity extends BaseActivity {
         editTextOrderNo = findViewById(R.id.edit_input_order_no);
         findViewById(R.id.btn_ok).setOnClickListener(this);
         findViewById(R.id.widget_scan_icon).setOnClickListener(this);
+        findViewById(R.id.widget_scan_icon_original_refund).setOnClickListener(this);
         editTextMerchantID = findViewById(R.id.edit_input_original_merchant_order_no_refund);
         InputFilter inputFilter = (source, start, end, dest, dstart, dend) -> {
             String input = source.toString();

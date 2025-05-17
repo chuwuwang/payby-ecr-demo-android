@@ -78,20 +78,16 @@ public class ConnectionActivity extends BaseActivity {
     }
 
     private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PermissionX
-                    .init(this)
-                    .permissions(Manifest.permission.BLUETOOTH_CONNECT)
-                    .request(requestCallback);
-        }
         PermissionX.init(this)
             .permissions(
-                    android.Manifest.permission.BLUETOOTH,
                     android.Manifest.permission.BLUETOOTH_SCAN,
+                    android.Manifest.permission.BLUETOOTH_CONNECT,
                     android.Manifest.permission.BLUETOOTH_ADMIN,
                     android.Manifest.permission.BLUETOOTH_ADVERTISE,
                     android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
             )
             .request(requestCallback);
     }

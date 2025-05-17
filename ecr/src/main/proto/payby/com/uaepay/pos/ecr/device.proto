@@ -6,6 +6,7 @@ message DeviceInfo {
   string deviceId = 1;
   Store store = 2;
   Merchant merchant = 3;
+  optional string sn = 4;
 }
 
 message Store{

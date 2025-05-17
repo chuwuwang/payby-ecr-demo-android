@@ -6,27 +6,49 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.ParcelUuid;
 import android.util.Log;
+import android.util.SparseArray;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.kongzue.dialogx.dialogs.WaitDialog;
 import com.payby.pos.ecr.App;
+import com.payby.pos.ecr.R;
+import com.payby.pos.ecr.ui.dialog.BLEConnectDialog;
+import com.payby.pos.ecr.ui.dialog.ble.DeviceAdapter;
+import com.payby.pos.ecr.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class BLEOperate {
 
+    private final Handler handler;
     private final Activity activity;
-
     private final BluetoothLeScanner bluetoothLeScanner;
+
+    private DeviceAdapter deviceAdapter;
+    private List<BluetoothDevice> deviceList;
+    private BLEConnectDialog bleConnectDialog;
 
     public BLEOperate(Activity activity) {
         this.activity = activity;
+        Looper mainLooper = Looper.getMainLooper();
+        handler = new Handler(mainLooper);
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+
+        ArrayList<BluetoothDevice> list = new ArrayList<>();
+        deviceList = Collections.synchronizedList(list);
+        initDialog(activity);
     }
 
     public void startSearch() {
@@ -58,12 +80,32 @@ public class BLEOperate {
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
             BluetoothDevice device = result.getDevice();
+            String deviceName = "";
             String address = device.getAddress();
-            Log.e(App.TAG, "onScanResult: " + address);
-            if (selectionListener != null) {
-                selectionListener.onSelectionBluetoothDevice(device);
+            try {
+                deviceName = device.getName();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            stopSearch();
+            Log.e(App.TAG, "onScanResult: " + address + " deviceName: " + deviceName);
+            ScanRecord scanRecord = result.getScanRecord();
+            if (scanRecord != null) {
+                SparseArray<byte[]> manufacturerSpecificData = scanRecord.getManufacturerSpecificData();
+                for (int i = 0; i < manufacturerSpecificData.size(); i++) {
+                    int manufacturerId = manufacturerSpecificData.keyAt(i);
+                    String id = Integer.toHexString(manufacturerId);
+                    byte[] data = manufacturerSpecificData.get(manufacturerId);
+                    String hexString = Utils.bytes2HexString(data);
+                    Log.e(App.TAG, "onScanResult: 厂商ID: 0x" + id + " Manufacturer Data: " + hexString);
+                }
+            }
+            boolean contains = deviceList.contains(device);
+            if (contains) return;
+            synchronized (deviceList) {
+                deviceList.add(device);
+                deviceAdapter.setData(deviceList);
+            }
+            handler.postDelayed( () -> stopSearch(), 10000);
         }
 
         @Override
@@ -85,6 +127,30 @@ public class BLEOperate {
 
     public void setSelectionListener(SelectionBluetoothDeviceListener listener) {
         selectionListener = listener;
+    }
+
+    private void initDialog(Activity activity) {
+        deviceAdapter = new DeviceAdapter();
+        deviceAdapter.setData(deviceList);
+        bleConnectDialog = new BLEConnectDialog(activity);
+        RecyclerView recyclerView = bleConnectDialog.findViewById(R.id.widget_recycler_ble_device_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(deviceAdapter);
+        deviceAdapter.setOnDeviceClickListener(
+            position -> {
+                BluetoothDevice device = deviceList.get(position);
+                if (selectionListener != null) {
+                    boolean bool = bleConnectDialog != null && bleConnectDialog.isShowing();
+                    if (bool) {
+                        bleConnectDialog.dismiss();
+                    }
+                    stopSearch();
+                    selectionListener.onSelectionBluetoothDevice(device);
+                }
+            }
+        );
+        bleConnectDialog.show();
     }
 
 }

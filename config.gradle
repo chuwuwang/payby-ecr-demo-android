@@ -3,8 +3,8 @@ build_versions.min_sdk = 24
 build_versions.target_sdk = 34
 build_versions.compile_sdk = 34
 
-build_versions.app_version_code = 4
-build_versions.app_version_name = "1.1.4"
+build_versions.app_version_code = 9
+build_versions.app_version_name = "1.1.9"
 
 build_versions.jvm_target = JavaVersion.VERSION_17
 build_versions.java_version = JavaVersion.VERSION_17

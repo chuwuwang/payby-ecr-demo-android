@@ -55,7 +55,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
 
-    api "no.nordicsemi.android:ble:2.9.0"
+    api "no.nordicsemi.android:ble:2.10.0"
     api "com.google.protobuf:protobuf-java-util:4.27.3"
     // Protobuf Java 库
     api 'com.google.protobuf:protobuf-java:3.24.0'  // 使用 javalite 版更轻量化

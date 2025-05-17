@@ -94,14 +94,14 @@ public class ConnectionKernel {
     public void connectWithBLE(Activity activity) {
         connectType = ConnectType.BLE;
         final BLEOperate.SelectionBluetoothDeviceListener selectionListener = new BLEOperate.SelectionBluetoothDeviceListener() {
-
             @Override
             public void onSelectionBluetoothDevice(BluetoothDevice device) {
+                WaitDialog.show("Connecting...");
                 BLEService.startAction(activity, BLEService.ACTION_CONNECT, device);
             }
 
         };
-        WaitDialog.show("Connecting...");
+
         BLEOperate operate = new BLEOperate(activity);
         operate.setSelectionListener(selectionListener);
         operate.startSearch();

@@ -56,6 +56,7 @@ public class VoidActivity extends BaseActivity {
         editTextMerchantID = findViewById(R.id.edit_input_original_merchant_order_no_void);
         findViewById(R.id.btn_ok).setOnClickListener(this);
         findViewById(R.id.widget_scan_icon).setOnClickListener(this);
+        findViewById(R.id.widget_scan_icon_original_void).setOnClickListener(this);
         InputFilter inputFilter = (source, start, end, dest, dstart, dend) -> {
             String input = source.toString();
             if (input.isEmpty() || input.matches("[A-Za-z0-9]*")) {
@@ -69,7 +70,6 @@ public class VoidActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // ClassicBTManager.getInstance().removeListener(connectionListener);
     }
 
     @Override
@@ -120,31 +120,6 @@ public class VoidActivity extends BaseActivity {
         ConnectionKernel.getInstance().send(byteArray);
     }
 
-    private final ConnectionListener connectionListener = new ConnectionListener() {
-
-        @Override
-        public void onConnected() {
-
-        }
-
-        @Override
-        public void onDisconnected() {
-            runOnUiThread(WaitDialog::dismiss);
-        }
-
-        @Override
-        public void onMessage(byte[] bytes) {
-            runOnUiThread(WaitDialog::dismiss);
-            String message = parser(bytes);
-            runOnUiThread(
-                () -> {
-                    String string = textReceive.getText().toString();
-                    textReceive.setText(string + "\n" + message);
-                }
-            );
-        }
-
-    };
     private int REQUEST_CODE_SCAN_ONE = 0x0101;
 
     @Override
@@ -182,9 +157,9 @@ public class VoidActivity extends BaseActivity {
         super.onReceiveMessage(bytes);
         runOnUiThread(WaitDialog::dismiss);
         try {
-            Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
-            Ecr.Response response = envelope.getResponse();
-            String s = parserResponse(response);
+//            Ecr.EcrEnvelope envelope = Ecr.EcrEnvelope.parseFrom(bytes);
+//            Ecr.Response response = envelope.getResponse();
+            String s = parser(bytes);
             runOnUiThread(() -> textReceive.setText(s));
         } catch (Exception e) {
             e.printStackTrace();
