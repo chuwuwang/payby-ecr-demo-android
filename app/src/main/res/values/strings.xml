@@ -1,6 +1,8 @@
 <resources>
 
     <string name="app_name">ECR Demo</string>
+
     <string name="widget_status_title">Connect Status:</string>
     <string name="widget_status_connected">Connected</string>
+
 </resources>
