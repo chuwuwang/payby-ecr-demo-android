@@ -83,8 +83,8 @@ dependencies {
     implementation libs.androidx.ui.tooling.preview
     implementation libs.androidx.material3
     implementation libs.androidx.appcompat
-    implementation project(':ecr')
 
+    implementation project(':ecr')
 
     implementation 'com.github.getActivity:Toaster:12.6'
     implementation "com.github.kongzue.DialogX:DialogX:0.0.49"

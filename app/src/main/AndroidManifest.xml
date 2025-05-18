@@ -22,6 +22,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
@@ -65,7 +66,7 @@
         <activity android:name=".ui.SettlementActivity" />
         <activity android:name=".ui.DeviceInfoActivity" />
         <activity android:name="com.huawei.hms.hmsscankit.ScanKitActivity" />
-        <activity android:name=".ui.HistoryActivity"/>
+        <activity android:name=".ui.HistoryActivity" />
 
         <service
             android:name=".bluetooth.ClassicBTService"
